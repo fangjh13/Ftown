@@ -11,4 +11,7 @@ def create_app(config_name='default'):
     from .main import main
     app.register_blueprint(main, url_prefix='/')
 
+    from .blog import blog
+    app.register_blueprint(blog, url_prefix='/blog')
+
     return app
