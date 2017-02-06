@@ -7,7 +7,8 @@ class Config(object):
 
 
 class DevelopmentConfig(Config):
-    pass
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://ftown:fangjh13@localhost/ftown'
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 
 class TestingConfig(Config):
@@ -25,4 +26,3 @@ config = {
 
     'default': DevelopmentConfig
 }
-
