@@ -2,10 +2,13 @@
 
 from . import blog
 from flask import render_template
+from ..models import User
 
 @blog.route('/')
 def home():
-    return render_template('/blog/home.html')
+    fython = User.query.filter_by(username='Fython').first_or_404()
+    posts = fython.posts.all()
+    return render_template('/blog/home.html', posts=posts)
 
 
 @blog.route('/about')

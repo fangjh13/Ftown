@@ -1,0 +1,12 @@
+{% for post in posts %}
+    <div class="post-preview">
+        <a href="{{ url_for('blog.post') }}">
+            <h2 class="post-title">{{ post.title }}</h2>
+            {% if post.subtitle %}
+                <h3 class="post-subtitle">{{ post.subtitle }}</h3>
+            {% endif %}
+        </a>
+        <p class="post-meta">Posted by <a href="#">{{ post.author.username }}</a> on {{ post.timestamp.strftime("%B %d, %Y") }}</p>
+    </div>
+    <hr>
+{% endfor %}
