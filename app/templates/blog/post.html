@@ -11,6 +11,9 @@
 
     <title>Clean Blog - Sample Post</title>
 
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+
     <!-- Bootstrap Core CSS -->
     <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -42,23 +45,23 @@
                     <span class="sr-only">Toggle navigation</span>
                     Menu <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand" href="home.html">Start Bootstrap</a>
+                <a class="navbar-brand" href="home.html">Fython Fang</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="home.html">Home</a>
+                        <a href="{{ url_for('blog.home') }}">Home</a>
                     </li>
                     <li>
-                        <a href="about.html">About</a>
+                        <a href="{{ url_for('blog.about') }}">About</a>
                     </li>
                     <li>
-                        <a href="post.html">Sample Post</a>
+                        <a href="{{ url_for('blog.post') }}">Latest Post</a>
                     </li>
                     <li>
-                        <a href="contact.html">Contact</a>
+                        <a href="{{ url_for('blog.contact') }}">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -69,14 +72,16 @@
 
     <!-- Page Header -->
     <!-- Set your background image for this header on the line below. -->
-    <header class="intro-header" style="background-image: url('/static/img/post-bg.jpg')">
+    <header class="intro-header" style="background-image: url('/static/img/{% if post.picture %}{{ post.picture }}{% else %}post-bg.jpg{% endif %}')">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <div class="post-heading">
-                        <h1>Man must explore, and this is exploration at its greatest</h1>
-                        <h2 class="subheading">Problems look mighty small from 150 miles up</h2>
-                        <span class="meta">Posted by <a href="#">Start Bootstrap</a> on August 24, 2014</span>
+                        <h1>{{ post.title }}</h1>
+                        {% if post.subtitle %}
+                            <h2 class="subheading">{{ post.subtitle }}</h2>
+                        {% endif %}
+                        <span class="meta">Posted by <a href="#">{{ post.author.username }}</a> on {{ post.timestamp.strftime("%B %d, %Y") }}</span>
                     </div>
                 </div>
             </div>
@@ -88,7 +93,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <p>Never in all their history have men been able truly to conceive of the world as one: a single sphere, a globe, having the qualities of a globe, a round earth in which all the directions eventually meet, in which there is no center because every point, or none, is center — an equal earth which all men occupy as equals. The airman's earth, if free men make it, will be truly round: a globe in practice, not in theory.</p>
+                    {{ post.body }}
+                    <!--<p>Never in all their history have men been able truly to conceive of the world as one: a single sphere, a globe, having the qualities of a globe, a round earth in which all the directions eventually meet, in which there is no center because every point, or none, is center — an equal earth which all men occupy as equals. The airman's earth, if free men make it, will be truly round: a globe in practice, not in theory.</p>
 
                     <p>Science cuts two ways, of course; its products can be used for both good and evil. But there's no turning back from science. The early warnings about technological dangers also come from science.</p>
 
@@ -121,7 +127,7 @@
 
                     <p>As I stand out here in the wonders of the unknown at Hadley, I sort of realize there’s a fundamental truth to our nature, Man must explore, and this is exploration at its greatest.</p>
 
-                    <p>Placeholder text by <a href="http://spaceipsum.com/">Space Ipsum</a>. Photographs by <a href="https://www.flickr.com/photos/nasacommons/">NASA on The Commons</a>.</p>
+                    <p>Placeholder text by <a href="http://spaceipsum.com/">Space Ipsum</a>. Photographs by <a href="https://www.flickr.com/photos/nasacommons/">NASA on The Commons</a>.</p>-->
                 </div>
             </div>
         </div>
