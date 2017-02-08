@@ -93,3 +93,6 @@ ENV/
 # Pycharm config
 __pycache__
 .idea/
+
+# Virtualenv
+ftownvenv/
