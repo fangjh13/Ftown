@@ -4,15 +4,18 @@
 from flask import Flask
 from config import config
 from flask_sqlalchemy import SQLAlchemy
+from flask_moment import Moment
 
 
 db = SQLAlchemy()
+moment = Moment()
 
 def create_app(config_name='default'):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
 
     db.init_app(app)
+    moment.init_app(app)
 
     from .main import main
     app.register_blueprint(main, url_prefix='/')

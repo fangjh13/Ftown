@@ -14,6 +14,12 @@
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
 
+    <!-- jquery -->
+    {{ moment.include_jquery() }}
+
+    <!-- moment -->
+    {{ moment.include_moment() }}
+
     <!-- Bootstrap Core CSS -->
     <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -81,7 +87,7 @@
                         {% if post.subtitle %}
                             <h2 class="subheading">{{ post.subtitle }}</h2>
                         {% endif %}
-                        <span class="meta">Posted by <a href="#">{{ post.author.username }}</a> on {{ post.timestamp.strftime("%B %d, %Y") }}</span>
+                        <span class="meta">Posted by <a href="#">{{ post.author.username }}</a> on {{ moment(post.timestamp).format('MMMM Do YYYY, h:mm:ss a') }}</span>
                     </div>
                 </div>
             </div>
