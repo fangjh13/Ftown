@@ -22,7 +22,7 @@ class Post(db.Model):
     title = db.Column(db.String(240), index=True)
     subtitle = db.Column(db.String(240), index=True)
     body = db.Column(db.Text)
-    picture = db.Column(db.String(20))
+    picture = db.Column(db.String(80))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 

@@ -17,6 +17,8 @@
     <!-- moment -->
     {{ moment.include_moment() }}
 
+
+
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
 
@@ -95,7 +97,7 @@
     <!-- Main Content -->
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1" id="post">
                 {% include '/blog/_posts.html' %}
                 <!--<div class="post-preview">
                     <a href="post.html">
@@ -143,11 +145,15 @@
                 </div>
                 <hr>-->
                 <!-- Pager -->
-                <ul class="pager">
+                {% if pagination %}
+                    {% import '/blog/_macros.html' as macros %}
+                    {{ macros.pagination_widget(pagination, 'blog.home') }}
+                {% endif %}
+                <!--<ul class="pager">
                     <li class="next">
                         <a href="#">Older Posts &rarr;</a>
                     </li>
-                </ul>
+                </ul>-->
             </div>
         </div>
     </div>
@@ -161,7 +167,7 @@
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <ul class="list-inline text-center">
                         <li>
-                            <a href="#">
+                            <a href="https://twitter.com/fythonfang">
                                 <span class="fa-stack fa-lg">
                                     <i class="fa fa-circle fa-stack-2x"></i>
                                     <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
@@ -169,7 +175,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="https://www.facebook.com/fythonfang">
                                 <span class="fa-stack fa-lg">
                                     <i class="fa fa-circle fa-stack-2x"></i>
                                     <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
@@ -177,7 +183,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="https://github.com/fangjh13">
                                 <span class="fa-stack fa-lg">
                                     <i class="fa fa-circle fa-stack-2x"></i>
                                     <i class="fa fa-github fa-stack-1x fa-inverse"></i>

@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from . import blog
-from flask import render_template
+from flask import render_template, request
 from ..models import User, Post
 
 @blog.route('/')
 def home():
+    page = request.args.get('page', 1, type=int)
     fython = User.query.filter_by(username='Fython').first_or_404()
-    posts = fython.posts.all()
-    return render_template('/blog/home.html', posts=posts)
+    pagination = fython.posts.order_by(Post.timestamp.desc()).paginate(
+        page, 4, error_out=False)
+    posts = pagination.items
+    return render_template('/blog/home.html', posts=posts, pagination=pagination)
 
 
 @blog.route('/about')
