@@ -1,6 +1,11 @@
 #! -*- coding: utf-8 -*-
 
+import os
+
+
 class Config(object):
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'qRk5fpfYwY5K22ci/l3/Ig=='
+
     @staticmethod
     def init_app(app):
         pass

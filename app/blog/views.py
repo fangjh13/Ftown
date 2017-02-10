@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from . import blog
-from flask import render_template, request
+from flask import render_template, request, flash, redirect, url_for
 from ..models import User, Post
 
 @blog.route('/')
@@ -30,6 +30,13 @@ def onepost(post_id):
     return render_template('/blog/post.html', post=post)
 
 
-@blog.route('/contact')
+@blog.route('/contact', methods=["GET", "POST"])
 def contact():
+    if request.method == "POST":
+        name = request.form['name']
+        email = request.form['email']
+        wechat = request.form.get('wechat')
+        message = request.form['message']
+        flash('提交成功，我会很快联系你的')
+        redirect(url_for('.contact'))
     return render_template('/blog/contact.html')

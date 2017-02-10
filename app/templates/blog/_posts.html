@@ -6,7 +6,7 @@
                 <h3 class="post-subtitle">{{ post.subtitle }}</h3>
             {% endif %}
         </a>
-        <p class="post-meta">Posted by <a href="#">{{ post.author.username }}</a> on {{ moment(post.timestamp).format('LL') }}</p>
+        <p class="post-meta">Posted by <a href="{{ url_for('blog.about') }}">{{ post.author.username }}</a> on {{ moment(post.timestamp).format('LL') }}</p>
     </div>
     <hr>
 {% endfor %}
