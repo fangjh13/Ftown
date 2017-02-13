@@ -1,0 +1,5 @@
+Content:
+
+{% for name, value in form.items() %}
+    {{ name }},  {{ value }}
+{% endfor %}

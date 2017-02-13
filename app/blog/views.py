@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from . import blog
+import os
 from flask import render_template, request, flash, redirect, url_for
 from ..models import User, Post
+from ..email import send_mail
 
 @blog.route('/')
 def home():
@@ -33,10 +35,10 @@ def onepost(post_id):
 @blog.route('/contact', methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
-        name = request.form['name']
-        email = request.form['email']
-        wechat = request.form.get('wechat')
-        message = request.form['message']
+        form = request.form
+        subject = '[IMPORTANT REPLY] someone contact to you'
+        send_mail(subject, os.environ.get('MAIL_USERNAME'), recipients=['616960344@qq.com'],
+                  template='/mail/mail_contact', form=form)
         flash('提交成功，我会很快联系你的')
         redirect(url_for('.contact'))
     return render_template('/blog/contact.html')
