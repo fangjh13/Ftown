@@ -6,10 +6,12 @@ from config import config
 from flask_sqlalchemy import SQLAlchemy
 from flask_moment import Moment
 from flask_mail import Mail
+from flask_bootstrap import Bootstrap
 
 db = SQLAlchemy()
 moment = Moment()
 mail = Mail()
+bootstrap = Bootstrap()
 
 def create_app(config_name='default'):
     app = Flask(__name__)
@@ -18,6 +20,7 @@ def create_app(config_name='default'):
     db.init_app(app)
     moment.init_app(app)
     mail.init_app(app)
+    bootstrap.init_app(app)
 
     from .main import main
     app.register_blueprint(main, url_prefix='/')

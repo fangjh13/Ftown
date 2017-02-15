@@ -2,7 +2,7 @@
 
 from . import blog
 import os
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, make_response
 from ..models import User, Post
 from ..email import send_mail
 from flask_httpauth import HTTPBasicAuth
@@ -23,7 +23,6 @@ def verify_pswd(username, password):
 
 
 @blog.route('/')
-@auth.login_required
 def home():
     page = request.args.get('page', 1, type=int)
     fython = User.query.filter_by(username='Fython').first_or_404()
@@ -59,3 +58,9 @@ def contact():
         flash('提交成功，我会很快联系你的')
         redirect(url_for('.contact'))
     return render_template('/blog/contact.html')
+
+
+@blog.route('/dashboard')
+@auth.login_required
+def post_new_blog():
+    return render_template('/blog/dashboard.html')
