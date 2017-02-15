@@ -5,8 +5,25 @@ import os
 from flask import render_template, request, flash, redirect, url_for
 from ..models import User, Post
 from ..email import send_mail
+from flask_httpauth import HTTPBasicAuth
+
+
+# Blog background management authentication
+auth = HTTPBasicAuth()
+
+@auth.verify_password
+def verify_pswd(username, password):
+    # blog administrator is `BlogAdmin`
+    if username == 'BlogAdmin':
+        blogadmin = User.query.filter_by(username='BlogAdmin').first_or_404()
+        if blogadmin.verify_password(password):
+            return True
+    return False
+
+
 
 @blog.route('/')
+@auth.login_required
 def home():
     page = request.args.get('page', 1, type=int)
     fython = User.query.filter_by(username='Fython').first_or_404()
@@ -37,8 +54,8 @@ def contact():
     if request.method == "POST":
         form = request.form
         subject = '[IMPORTANT REPLY] someone contact to you'
-        send_mail(subject, os.environ.get('MAIL_USERNAME'), recipients=['616960344@qq.com'],
-                  template='/mail/mail_contact', form=form)
+        send_mail(subject, "Blog Admin <{0}>".format(os.environ.get('MAIL_USERNAME')),
+                  recipients=['616960344@qq.com'], template='/mail/mail_contact', form=form)
         flash('提交成功，我会很快联系你的')
         redirect(url_for('.contact'))
     return render_template('/blog/contact.html')
