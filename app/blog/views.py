@@ -2,7 +2,7 @@
 
 from . import blog
 import os
-from flask import render_template, request, flash, redirect, url_for, make_response
+from flask import render_template, request, flash, redirect, url_for
 from ..models import User, Post
 from ..email import send_mail
 from flask_httpauth import HTTPBasicAuth
@@ -64,3 +64,4 @@ def contact():
 @auth.login_required
 def post_new_blog():
     return render_template('/blog/dashboard.html')
+
