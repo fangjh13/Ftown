@@ -26,6 +26,7 @@ def verify_pswd(username, password):
 def home():
     page = request.args.get('page', 1, type=int)
     fython = User.query.filter_by(username='Fython').first_or_404()
+    # flask-SQLAlchemy Pagination
     pagination = fython.posts.order_by(Post.timestamp.desc()).paginate(
         page, 4, error_out=False)
     posts = pagination.items
@@ -62,6 +63,11 @@ def contact():
 
 @blog.route('/dashboard')
 @auth.login_required
-def post_new_blog():
-    return render_template('/blog/dashboard.html')
+def dashboard():
+    fython = User.query.filter_by(username='Fython').first_or_404()
+    page = request.args.get('page', 1, type=int)
+    pagination = fython.posts.order_by(Post.timestamp.desc()).paginate(
+       page, 10, error_out=False)
+    posts = pagination.items
+    return render_template('/blog/dashboard.html', posts=posts ,pagination=pagination, endpoint='blog.dashboard')
 

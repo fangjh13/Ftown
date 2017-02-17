@@ -1,36 +1,62 @@
 {% extends "/blog/base.html" %}
+{% import "/blog/_macros.html" as macros %}
 
 {% block content %}
 <div class="container">
 
-<div class="row" style="margin-top:60px">
-    <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
-    	<form role="form">
-			<fieldset>
-				<h2>Please Sign In</h2>
-				<hr class="colorgraph">
-				<div class="form-group">
-                    <input type="email" name="email" id="email" class="form-control input-lg" placeholder="Email Address">
-				</div>
-				<div class="form-group">
-                    <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password">
-				</div>
-				<span class="button-checkbox">
-					<button type="button" class="btn" data-color="info">Remember Me</button>
-                    <input type="checkbox" name="remember_me" id="remember_me" checked="checked" class="hidden">
-					<a href="" class="btn btn-link pull-right">Forgot Password?</a>
-				</span>
-				<hr class="colorgraph">
-				<div class="row">
-					<div class="col-xs-6 col-sm-6 col-md-6">
-                        <input type="submit" class="btn btn-lg btn-success btn-block" value="Sign In">
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-6">
-						<a href="" class="btn btn-lg btn-primary btn-block">Register</a>
-					</div>
-				</div>
-			</fieldset>
-		</form>
+<div class="row" style="margin-top:100px">
+    <div class="table-box">
+        <ul class="nav nav-tabs" role="tablist" id="feature-tab">
+            <li class="active"><a href="/blog/admin">文章</a></li>
+            <li><a href="/blog/album/admin">相册</a></li>
+        </ul>
+        <div style="padding-top: 10px">
+
+            <a data-toggle="modal" data-target="#add-blog-modal" class="btn btn-info btn-sm">WRITE</a>
+            <table class="table table-hover" id="blog-table" >
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>TITLE</th>
+                    <th>PICTURE</th>
+                    <th>阅读量</th>
+                    <th>评论数</th>
+                    <th>点赞数</th>
+                    <th>创建时间</th>
+                    <th>REVISES</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                        {% for p in posts %}
+                        <tr>
+                            <td>NO.1</td>
+                            <td><a href="{{ url_for('blog.onepost', post_id=p.id) }}">{{ p.title }}</a></td>
+                            <td>
+                                <a href="/static/img/{{ p.picture }}" class="thumbnail" data-title="<div style='padding-top:5px;font-size: 16px'></div>">
+                                    <img src="/static/img/{{ p.picture }}" height="30px" style="height: 30px">
+                                </a>
+                            </td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <!--TODO-->
+                            <td>2017-02-17 10:28:07</td>
+                            <td>2017-02-17 10:28:07</td>
+                            <td>
+                                <div class="btn-group btn-group-xs">
+                                    <button type="button" class="btn btn-success" name="1" onclick="editInfo(this)">修改</button>
+                                    <a data-toggle="modal" data-target="#deleteBlogModel" type="button" class="btn btn-warning">删除</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagination-bottom" style="text-align: center">
+                {{ macros.pagination_widget_long(pagination, 'blog.dashboard') }}
+            </div>
+        </div>
 	</div>
 </div>
 
