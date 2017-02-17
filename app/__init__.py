@@ -16,6 +16,8 @@ mail = Mail()
 bootstrap = Bootstrap()
 login_manager = LoginManager()
 
+login_manager.login_view = "auth.login"
+
 def create_app(config_name='default'):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -27,7 +29,7 @@ def create_app(config_name='default'):
     login_manager.init_app(app)
 
     from .main import main
-    app.register_blueprint(main, url_prefix='/')
+    app.register_blueprint(main)
 
     from .blog import blog
     app.register_blueprint(blog, url_prefix='/blog')
