@@ -4,6 +4,8 @@ from datetime import datetime
 from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from markdown import markdown
+import bleach
 
 
 class User(db.Model, UserMixin):
@@ -29,10 +31,12 @@ class User(db.Model, UserMixin):
     def verify_password(self, pswd):
         return check_password_hash(self.password_hash, pswd)
 
+
 # flask-login user_loader callback
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -40,6 +44,7 @@ class Post(db.Model):
     title = db.Column(db.String(240), index=True)
     subtitle = db.Column(db.String(240), index=True)
     body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
     picture = db.Column(db.String(80))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     # modified timestamp
@@ -48,3 +53,13 @@ class Post(db.Model):
 
     def __repr__(self):
         return 'Post by %r' % self.author_id
+
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p', 'pic']
+        target.body_html = bleach.clean(markdown(value, output_format='html'),
+                        tags=allowed_tags, strip=True)
+
+db.event.listen(Post.body, 'set', Post.on_changed_body)

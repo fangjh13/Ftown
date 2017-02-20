@@ -73,9 +73,17 @@ def dashboard():
     return render_template('/blog/dashboard.html', posts=posts ,pagination=pagination, endpoint='blog.dashboard')
 
 
-@blog.route('/write')
+@blog.route('/write', methods=['GET', 'POST'])
 def write():
     form = WriteForm()
     if form.validate_on_submit():
-        pass
+        title = form.title.data
+        subtitle = form.subtitle.data
+        body = form.body.data
+        import markdown
+        import bleach
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p', 'pic']
+        print(bleach.clean(markdown.markdown(body, output_format='html'), tags=allowed_tags, strip=True))
     return render_template('/blog/write.html', form=form)
