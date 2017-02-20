@@ -42,6 +42,8 @@ class Post(db.Model):
     body = db.Column(db.Text)
     picture = db.Column(db.String(80))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    # modified timestamp
+    mtimestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):

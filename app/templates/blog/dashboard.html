@@ -7,8 +7,8 @@
 <div class="row" style="margin-top:100px">
     <div class="table-box">
         <ul class="nav nav-tabs" role="tablist" id="feature-tab">
-            <li class="active"><a href="/blog/admin">文章</a></li>
-            <li><a href="/blog/album/admin">相册</a></li>
+            <li class="active"><a href="#">ARTICLE</a></li>
+            <li class="disabled"><a href="#">GALLERY</a></li>
         </ul>
         <div style="padding-top: 10px">
 
@@ -19,19 +19,19 @@
                     <th>ID</th>
                     <th>TITLE</th>
                     <th>PICTURE</th>
-                    <th>阅读量</th>
-                    <th>评论数</th>
-                    <th>点赞数</th>
-                    <th>创建时间</th>
-                    <th>REVISES</th>
-                    <th>操作</th>
+                    <th>READS</th>
+                    <th>COMMENTS</th>
+                    <th>LIKES</th>
+                    <th>CTIME</th>
+                    <th>MTIME</th>
+                    <th>OPERATE</th>
                 </tr>
                 </thead>
                 <tbody>
                         {% for p in posts %}
                         <tr>
-                            <td>NO.1</td>
-                            <td><a href="{{ url_for('blog.onepost', post_id=p.id) }}">{{ p.title }}</a></td>
+                            <td>NO.{{ p.id }}</td>
+                            <td width="380px"><a href="{{ url_for('blog.onepost', post_id=p.id) }}">{{ p.title }}</a></td>
                             <td>
                                 <a href="/static/img/{{ p.picture }}" class="thumbnail" data-title="<div style='padding-top:5px;font-size: 16px'></div>">
                                     <img src="/static/img/{{ p.picture }}" height="30px" style="height: 30px">
@@ -40,13 +40,12 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <!--TODO-->
-                            <td>2017-02-17 10:28:07</td>
-                            <td>2017-02-17 10:28:07</td>
-                            <td>
+                            <td>{{ moment(p.timestamp).format('lll') }}</td>
+                            <td>{{ moment(p.mtimestamp).format('lll') }}</td>
+                            <td width="130px">
                                 <div class="btn-group btn-group-xs">
-                                    <button type="button" class="btn btn-success" name="1" onclick="editInfo(this)">修改</button>
-                                    <a data-toggle="modal" data-target="#deleteBlogModel" type="button" class="btn btn-warning">删除</a>
+                                    <button type="button" class="btn btn-success" name="1" onclick="editInfo(this)">REVISE</button>
+                                    <a data-toggle="modal" data-target="#deleteBlogModel" type="button" class="btn btn-warning">DELETE</a>
                                 </div>
                             </td>
                         </tr>

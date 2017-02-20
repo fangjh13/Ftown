@@ -78,4 +78,5 @@
 {% block scripts %}
     {{ super() }}
     <script src="{{ url_for('static', filename='scripts-blog.js') }}"></script>
+    {{ moment.include_moment() }}
 {% endblock %}
