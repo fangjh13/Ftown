@@ -8,6 +8,7 @@ from ..models import User, Post
 from ..email import send_mail
 from flask_httpauth import HTTPBasicAuth
 from .forms import WriteForm
+from datetime import datetime
 
 
 # Blog background management authentication
@@ -44,6 +45,7 @@ def about():
 def post():
     post = Post.query.order_by(Post.timestamp.desc()).first_or_404()
     return render_template('/blog/post.html', post=post)
+
 
 @blog.route('/post/<int:post_id>')
 def onepost(post_id):
@@ -87,3 +89,24 @@ def write():
         db.session.commit()
         return redirect(url_for('blog.post'))
     return render_template('/blog/write.html', form=form)
+
+
+@blog.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit(id):
+    p = Post.query.filter_by(id=id).first_or_404()
+    form = WriteForm()
+    if form.validate_on_submit():
+        p.title = form.title.data
+        p.subtitle =form.subtitle.data
+        p.body = form.body.data
+        p.mtimestamp = datetime.utcnow()
+        db.session.add(p)
+        db.session.commit()
+        return redirect(url_for('blog.onepost', post_id=id))
+    form.title.data = p.title
+    form.subtitle.data = p.subtitle
+    form.body.data = p.body
+    return render_template('/blog/write.html', form=form)
+
+
+

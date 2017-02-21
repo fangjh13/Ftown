@@ -12,7 +12,7 @@
         </ul>
         <div style="padding-top: 10px">
 
-            <a data-toggle="modal" data-target="#add-blog-modal" class="btn btn-info btn-sm">WRITE</a>
+            <a class="btn btn-info btn-sm" href="{{ url_for('blog.write') }}">WRITE</a>
             <table class="table table-hover" id="blog-table" >
                 <thead>
                 <tr>
@@ -40,12 +40,12 @@
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
-                            <td>{{ moment(p.timestamp).format('lll') }}</td>
+                            <td>{{ moment(p.timestamp).format('l') }}</td>
                             <td>{{ moment(p.mtimestamp).format('lll') }}</td>
                             <td width="130px">
                                 <div class="btn-group btn-group-xs">
-                                    <button type="button" class="btn btn-success" name="1" onclick="editInfo(this)">REVISE</button>
-                                    <a data-toggle="modal" data-target="#deleteBlogModel" type="button" class="btn btn-warning">DELETE</a>
+                                    <button type="button" class="btn btn-success" onclick="location.href='{{ url_for('blog.edit', id=p.id) }}'">REVISE</button>
+                                    <a class="btn btn-warning" href="#">DELETE</a>
                                 </div>
                             </td>
                         </tr>
