@@ -3,6 +3,7 @@
 from . import blog
 import os
 from flask import render_template, request, flash, redirect, url_for
+from app import db
 from ..models import User, Post
 from ..email import send_mail
 from flask_httpauth import HTTPBasicAuth
@@ -80,10 +81,9 @@ def write():
         title = form.title.data
         subtitle = form.subtitle.data
         body = form.body.data
-        import markdown
-        import bleach
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p', 'pic']
-        print(bleach.clean(markdown.markdown(body, output_format='html'), tags=allowed_tags, strip=True))
+        u = User.query.filter_by(username='Fython').first_or_404()
+        p = Post(title=title, subtitle=subtitle, body=body, author=u)
+        db.session.add(p)
+        db.session.commit()
+        return redirect(url_for('blog.post'))
     return render_template('/blog/write.html', form=form)
