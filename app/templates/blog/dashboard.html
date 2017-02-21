@@ -1,10 +1,26 @@
 {% extends "/blog/base.html" %}
 {% import "/blog/_macros.html" as macros %}
 
+{% block head %}
+{{ super() }}
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+{% endblock %}
+
 {% block content %}
 <div class="container">
 
-<div class="row" style="margin-top:100px">
+<div class="row" style="margin-top:90px">
+
+    {% for message in get_flashed_messages() %}
+        {% if message %}
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+
     <div class="table-box">
         <ul class="nav nav-tabs" role="tablist" id="feature-tab">
             <li class="active"><a href="#">ARTICLE</a></li>
@@ -45,7 +61,7 @@
                             <td width="130px">
                                 <div class="btn-group btn-group-xs">
                                     <button type="button" class="btn btn-success" onclick="location.href='{{ url_for('blog.edit', id=p.id) }}'">REVISE</button>
-                                    <a class="btn btn-warning" href="#">DELETE</a>
+                                    <a class="btn btn-warning" href="{{ url_for('blog.delete', id=p.id) }}">DELETE</a>
                                 </div>
                             </td>
                         </tr>

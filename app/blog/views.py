@@ -109,4 +109,10 @@ def edit(id):
     return render_template('/blog/write.html', form=form)
 
 
-
+@blog.route('/delete/<int:id>')
+def delete(id):
+    p = Post.query.filter_by(id=id).first_or_404()
+    db.session.delete(p)
+    db.session.commit()
+    flash('DELETE SUCCESS')
+    return redirect(url_for('blog.dashboard'))
