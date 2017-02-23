@@ -1,27 +1,29 @@
 # -*- coding: utf-8 -*-
 
-from . import blog
 import os
-from flask import render_template, request, flash, redirect, url_for
-from app import db
-from ..models import User, Post
-from ..email import send_mail
-from flask_httpauth import HTTPBasicAuth
-from .forms import WriteForm
 from datetime import datetime
+
+from flask import render_template, request, flash, redirect, url_for
+from werkzeug.utils import secure_filename
+
+from app import db
+from . import blog
+from .forms import WriteForm
+from ..email import send_mail
+from ..models import User, Post
 
 
 # Blog background management authentication
-auth = HTTPBasicAuth()
-
-@auth.verify_password
-def verify_pswd(username, password):
-    # blog administrator is `BlogAdmin`
-    if username == 'BlogAdmin':
-        blogadmin = User.query.filter_by(username='BlogAdmin').first_or_404()
-        if blogadmin.verify_password(password):
-            return True
-    return False
+# auth = HTTPBasicAuth()
+#
+# @auth.verify_password
+# def verify_pswd(username, password):
+#     # blog administrator is `BlogAdmin`
+#     if username == 'BlogAdmin':
+#         blogadmin = User.query.filter_by(username='BlogAdmin').first_or_404()
+#         if blogadmin.verify_password(password):
+#             return True
+#     return False
 
 
 
@@ -66,25 +68,37 @@ def contact():
 
 
 @blog.route('/dashboard')
-@auth.login_required
 def dashboard():
     fython = User.query.filter_by(username='Fython').first_or_404()
     page = request.args.get('page', 1, type=int)
     pagination = fython.posts.order_by(Post.timestamp.desc()).paginate(
-       page, 10, error_out=False)
+        page, 10, error_out=False)
     posts = pagination.items
-    return render_template('/blog/dashboard.html', posts=posts ,pagination=pagination, endpoint='blog.dashboard')
+    return render_template('/blog/dashboard.html', posts=posts, pagination=pagination,
+                                                                endpoint='blog.dashboard')
 
 
 @blog.route('/write', methods=['GET', 'POST'])
 def write():
     form = WriteForm()
     if form.validate_on_submit():
+        # save uploaded picture
+        p = form.picture.data
+        filename = secure_filename(p.filename)
+          # unique filename
+        split = os.path.splitext(filename)
+        id = Post.query.order_by(Post.id.desc()).first().id + 1
+        filename = split[0] + '-' + str(id) + split[1]
+        dirpath = os.path.abspath(os.path.dirname(__name__))
+        p.save(os.path.join(dirpath, 'app/static/img', filename))
+
         title = form.title.data
         subtitle = form.subtitle.data
         body = form.body.data
+
         u = User.query.filter_by(username='Fython').first_or_404()
-        p = Post(title=title, subtitle=subtitle, body=body, author=u)
+        p = Post(picture=filename, title=title, subtitle=subtitle,
+                 body=body, author=u)
         db.session.add(p)
         db.session.commit()
         return redirect(url_for('blog.post'))
@@ -96,8 +110,17 @@ def edit(id):
     p = Post.query.filter_by(id=id).first_or_404()
     form = WriteForm()
     if form.validate_on_submit():
+        pic = form.picture.data
+        filename = secure_filename(pic.name)
+        split = os.path.splitext(filename)
+        suffix = p.id
+        filename = split[0] + '-' + str(suffix) + split[1]
+        dirpath = os.path.abspath(os.path.dirname(__name__))
+        pic.save(os.path.join(dirpath, 'app/static/img', filename))
+
+        p.picture = filename
         p.title = form.title.data
-        p.subtitle =form.subtitle.data
+        p.subtitle = form.subtitle.data
         p.body = form.body.data
         p.mtimestamp = datetime.utcnow()
         db.session.add(p)
