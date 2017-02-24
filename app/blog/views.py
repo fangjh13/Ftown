@@ -14,6 +14,7 @@ from ..models import User, Post
 
 
 # Blog background management authentication
+# from flask_httpauth import HTTPBasicAuth
 # auth = HTTPBasicAuth()
 #
 # @auth.verify_password
