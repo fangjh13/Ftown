@@ -3,7 +3,8 @@
 import os
 from datetime import datetime
 
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, abort
+from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 
 from app import db
@@ -31,9 +32,8 @@ from ..models import User, Post
 @blog.route('/')
 def home():
     page = request.args.get('page', 1, type=int)
-    fython = User.query.filter_by(username='Fython').first_or_404()
     # flask-SQLAlchemy Pagination
-    pagination = fython.posts.order_by(Post.timestamp.desc()).paginate(
+    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
         page, 4, error_out=False)
     posts = pagination.items
     return render_template('/blog/home.html', posts=posts, pagination=pagination)
@@ -69,10 +69,11 @@ def contact():
 
 
 @blog.route('/dashboard')
+@login_required
 def dashboard():
-    fython = User.query.filter_by(username='Fython').first_or_404()
+    user = User.query.filter_by(username=current_user.username).first_or_404()
     page = request.args.get('page', 1, type=int)
-    pagination = fython.posts.order_by(Post.timestamp.desc()).paginate(
+    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
         page, 10, error_out=False)
     posts = pagination.items
     return render_template('/blog/dashboard.html', posts=posts, pagination=pagination,
@@ -80,6 +81,7 @@ def dashboard():
 
 
 @blog.route('/write', methods=['GET', 'POST'])
+@login_required
 def write():
     form = WriteForm()
     if form.validate_on_submit():
@@ -97,7 +99,7 @@ def write():
         subtitle = form.subtitle.data
         body = form.body.data
 
-        u = User.query.filter_by(username='Fython').first_or_404()
+        u = User.query.filter_by(username=current_user.username).first_or_404()
         p = Post(picture=filename, title=title, subtitle=subtitle,
                  body=body, author=u)
         db.session.add(p)
@@ -107,8 +109,11 @@ def write():
 
 
 @blog.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit(id):
     p = Post.query.filter_by(id=id).first_or_404()
+    if p.author.id != current_user.id:
+        abort(403)
     form = WriteForm()
     if form.validate_on_submit():
         pic = form.picture.data
@@ -134,8 +139,11 @@ def edit(id):
 
 
 @blog.route('/delete/<int:id>')
+@login_required
 def delete(id):
     p = Post.query.filter_by(id=id).first_or_404()
+    if p.author.id != current_user.id:
+        abort(403)
     db.session.delete(p)
     db.session.commit()
     flash('DELETE SUCCESS')

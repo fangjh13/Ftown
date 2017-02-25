@@ -11,7 +11,7 @@ class WriteForm(FlaskForm):
     picture = FileField('Picture limited 16MB', validators=[
         FileAllowed(['jpg', 'png', 'jpeg'], 'Image only!')
     ])
-    title = StringField('Title', validators=[DataRequired(), Length(1, 80)])
-    subtitle = StringField('Subtitle', validators=[Length(0, 80)])
+    title = StringField('Title', validators=[DataRequired(), Length(1, 100)])
+    subtitle = StringField('Subtitle', validators=[Length(0, 120)])
     body = PageDownField('Body Content: PS. support markdown')
     submit = SubmitField('Submit', validators=[DataRequired()])
