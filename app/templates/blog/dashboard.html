@@ -1,26 +1,9 @@
-{% extends "/blog/base.html" %}
+{% extends "/book/base.html" %}
 {% import "/blog/_macros.html" as macros %}
 
-{% block head %}
-{{ super() }}
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
-{% block content %}
-<div class="container">
-
-<div class="row" style="margin-top:90px">
-
-    {% for message in get_flashed_messages() %}
-        {% if message %}
-            <div class="alert alert-warning">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
-            </div>
-        {% endif %}
-    {% endfor %}
-
+{% block page_content %}
     <div class="table-box">
         <ul class="nav nav-tabs" role="tablist" id="feature-tab">
             <li class="active"><a href="#">ARTICLE</a></li>
@@ -73,7 +56,4 @@
             </div>
         </div>
 	</div>
-</div>
-
-</div>
 {% endblock %}

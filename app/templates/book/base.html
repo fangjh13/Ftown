@@ -1,6 +1,6 @@
 {%- extends "bootstrap/base.html" %}
 
-{% block title %}Blog Dashboard{% endblock %}
+{% block title %}书床{% endblock %}
 
 {% block head %}
 {{ super() }}
@@ -73,10 +73,24 @@
 {% endblock %}
 
 {% block content %}
+<div class="container">
+    <div class="row" style="margin-top:80px">
+
+        {% for message in get_flashed_messages() %}
+        {% if message %}
+        <div class="alert alert-warning" style="margin-top: 0px; margin-bottom: 25px">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        {% block page_content %}{% endblock %}
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-    {{ super() }}
-    <script src="{{ url_for('static', filename='scripts-blog.js') }}"></script>
-    {{ moment.include_moment() }}
+{{ super() }}
+{{ moment.include_moment() }}
 {% endblock %}
