@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from . import auth
-from flask import redirect, render_template, request, url_for, make_response
+from flask import redirect, render_template, request, url_for, flash
 from ..models import User
 from flask_login import login_user
 from urllib.parse import urlparse, urljoin
@@ -28,4 +28,5 @@ def login():
                if not is_safe_url(next):
                    next = None
                return redirect(next or url_for('blog.home'))
+            flash('用户名或密码错误，请重试。')
     return render_template('/auth/login.html')
