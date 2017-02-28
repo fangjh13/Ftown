@@ -3,7 +3,7 @@
 from . import auth
 from flask import redirect, render_template, request, url_for, flash
 from ..models import User
-from flask_login import login_user
+from flask_login import login_user, logout_user
 from urllib.parse import urlparse, urljoin
 
 
@@ -30,3 +30,10 @@ def login():
                return redirect(next or url_for('blog.home'))
             flash('用户名或密码错误，请重试。')
     return render_template('/auth/login.html')
+
+
+@auth.route('/logout')
+def logout():
+    logout_user()
+    flash('你已经退出登录')
+    return redirect(url_for('auth.login'))
