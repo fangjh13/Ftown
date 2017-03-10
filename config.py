@@ -30,6 +30,11 @@ class TestingConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://ftown:fangjh13@localhost/ftown_test'
     WTF_CSRF_ENABLED = False
+    MAIL_SERVER = "smtp.163.com"
+    MAIL_PORT = 25
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = False
+    # MAIL_SUPPRESS_SEND = False
 
 
 class ProductionConfig(Config):
