@@ -12,6 +12,7 @@ from . import blog
 from .forms import WriteForm
 from ..email import send_mail
 from ..models import User, Post
+from .qiniu_ftown import upload_picture
 
 
 # Blog background management authentication
@@ -85,15 +86,15 @@ def dashboard():
 def write():
     form = WriteForm()
     if form.validate_on_submit():
-        # save uploaded picture
+        # save uploaded picture to qiniu
         p = form.picture.data
         filename = secure_filename(p.filename)
           # unique filename
         split = os.path.splitext(filename)
         id = Post.query.order_by(Post.id.desc()).first().id + 1
         filename = split[0] + '-' + str(id) + split[1]
-        dirpath = os.path.abspath(os.path.dirname(__name__))
-        p.save(os.path.join(dirpath, 'app/static/img', filename))
+        data = p.read()
+        upload_picture('blog', filename, data)
 
         title = form.title.data
         subtitle = form.subtitle.data
@@ -117,12 +118,12 @@ def edit(id):
     form = WriteForm()
     if form.validate_on_submit():
         pic = form.picture.data
-        filename = secure_filename(pic.name)
+        filename = secure_filename(pic.filename)
         split = os.path.splitext(filename)
         suffix = p.id
         filename = split[0] + '-' + str(suffix) + split[1]
-        dirpath = os.path.abspath(os.path.dirname(__name__))
-        pic.save(os.path.join(dirpath, 'app/static/img', filename))
+        data = pic.read()
+        upload_picture('blog', filename, data)
 
         p.picture = filename
         p.title = form.title.data
