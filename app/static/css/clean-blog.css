@@ -398,3 +398,9 @@ img::-moz-selection {
 body {
   -webkit-tap-highlight-color: #0085A1;
 }
+.post-footer {
+  text-align: right;
+}
+.label {
+  font-size: 60%;
+}

@@ -11,7 +11,7 @@
                     <div class="page-heading">
                         <h1>Contact Me</h1>
                         <hr class="small">
-                        <span class="subheading">Have questions? I have answers (maybe).</span>
+                        <span class="subheading">Have questions? I have answers.</span>
                     </div>
                 </div>
             </div>
@@ -22,7 +22,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <p>Want to get in touch with me? Fill out the form below to send me a message and I will try to get back to you within 24 hours!</p>
+                <p>想要联系我？请填写以下表格给我发送消息，我会在24小时之内回复你！</p>
                 <form name="sentMessage" action = "{{ url_for("blog.contact") }}" method = "POST">
                     <div id="success">
                         {% with messages = get_flashed_messages() %}
