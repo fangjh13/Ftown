@@ -19,6 +19,7 @@ login_manager = LoginManager()
 pagedown = PageDown()
 
 login_manager.login_view = "auth.login"
+login_manager.login_message = "用户未登录，请先登录"
 
 def create_app(config_name='default'):
     app = Flask(__name__)
