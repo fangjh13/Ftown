@@ -155,3 +155,12 @@ def delete(id):
     db.session.commit()
     flash('DELETE SUCCESS')
     return redirect(url_for('blog.dashboard'))
+
+
+@blog.route('/like/<int:id>')
+def like(id):
+    p = Post.query.filter_by(id=id).first_or_404()
+    p.likes += 1
+    db.session.add(p)
+    db.session.commit()
+    return redirect(url_for('blog.home'))

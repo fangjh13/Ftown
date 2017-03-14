@@ -87,3 +87,13 @@ class FlaskClientCase(unittest.TestCase):
         self.assertTrue("浏览量 2".encode('utf-8') in response.data)
         p = Post.query.first()
         self.assertTrue(p.views==2)
+
+    def test_index_like(self):
+        p = Post.query.first()
+        self.assertTrue(p.likes==0)
+        response = self.client.get(url_for('blog.like', id=p.id),
+                                   follow_redirects=True)
+        self.assertTrue(b'1 Likes' in response.data)
+        p1 = Post.query.first()
+        self.assertTrue(p1.likes==1)
+
