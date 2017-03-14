@@ -48,12 +48,18 @@ def about():
 @blog.route('/post')
 def post():
     post = Post.query.order_by(Post.timestamp.desc()).first_or_404()
+    post.views += 1
+    db.session.add(post)
+    db.session.commit()
     return render_template('/blog/post.html', post=post)
 
 
 @blog.route('/post/<int:post_id>')
 def onepost(post_id):
     post = Post.query.get_or_404(post_id)
+    post.views += 1
+    db.session.add(post)
+    db.session.commit()
     return render_template('/blog/post.html', post=post)
 
 

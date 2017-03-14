@@ -50,6 +50,8 @@ class Post(db.Model):
     # modified timestamp
     mtimestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    views = db.Column(db.Integer, default=0)
+    likes = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return 'Post by %r' % self.author_id

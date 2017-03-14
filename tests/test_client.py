@@ -3,7 +3,7 @@
 
 import unittest
 from app import create_app, db, mail
-from app.models import User
+from app.models import User, Post
 from flask import url_for
 import os
 
@@ -18,6 +18,9 @@ class FlaskClientCase(unittest.TestCase):
         # insert a user
         u = User(email='test@example.com', password='1234')
         db.session.add(u)
+        db.session.commit()
+        p = Post(title='test_post', body='post body', author=u)
+        db.session.add(p)
         db.session.commit()
 
     def tearDown(self):
@@ -74,3 +77,13 @@ class FlaskClientCase(unittest.TestCase):
                 recipients=['616960344@qq.com'])
             self.assertTrue(len(outbox) == 1)
             self.assertTrue(outbox[0].subject == 'unittest')
+
+    def test_post_views(self):
+        p = Post.query.first()
+        self.assertTrue(p.views==0)
+        self.client.get(url_for('blog.post'))
+        p = Post.query.first()
+        response = self.client.get('/blog/post/1')
+        self.assertTrue("浏览量 2".encode('utf-8') in response.data)
+        p = Post.query.first()
+        self.assertTrue(p.views==2)
