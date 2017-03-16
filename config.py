@@ -17,7 +17,9 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://ftown:fangjh13@localhost/ftown'
+    SQLALCHEMY_DATABASE_URI = \
+        'mysql+pymysql://{}:{}@localhost/ftown'.format(
+            os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
     MAIL_SERVER = "smtp.163.com"
     MAIL_PORT = 25
     MAIL_USE_TLS = False
@@ -28,7 +30,9 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://ftown:fangjh13@localhost/ftown_test'
+    SQLALCHEMY_DATABASE_URI = \
+        'mysql+pymysql://{}:{}@localhost/ftown_test'.format(
+            os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
     WTF_CSRF_ENABLED = False
     MAIL_SERVER = "smtp.163.com"
     MAIL_PORT = 25
@@ -38,10 +42,10 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-    MAIL_SERVER = ""
-    MAIL_PORT = 25
+    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_PORT = 587
     MAIL_USE_TLS = False
-    MAIL_USE_SSL = False
+    MAIL_USE_SSL = True
 
 
 config = {
