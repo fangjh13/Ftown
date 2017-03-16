@@ -92,15 +92,18 @@ def dashboard():
 def write():
     form = WriteForm()
     if form.validate_on_submit():
-        # save uploaded picture to qiniu
-        p = form.picture.data
-        filename = secure_filename(p.filename)
-          # unique filename
-        split = os.path.splitext(filename)
-        id = Post.query.order_by(Post.id.desc()).first().id + 1
-        filename = split[0] + '-' + str(id) + split[1]
-        data = p.read()
-        upload_picture('blog', filename, data)
+        if form.picture.data:
+            # save uploaded picture to qiniu
+            p = form.picture.data
+            filename = secure_filename(p.filename)
+              # unique filename
+            split = os.path.splitext(filename)
+            id = Post.query.order_by(Post.id.desc()).first().id + 1
+            filename = split[0] + '-' + str(id) + split[1]
+            data = p.read()
+            upload_picture('blog', filename, data)
+        else:
+            filename = None
 
         title = form.title.data
         subtitle = form.subtitle.data
@@ -124,12 +127,15 @@ def edit(id):
     form = WriteForm()
     if form.validate_on_submit():
         pic = form.picture.data
-        filename = secure_filename(pic.filename)
-        split = os.path.splitext(filename)
-        suffix = p.id
-        filename = split[0] + '-' + str(suffix) + split[1]
-        data = pic.read()
-        upload_picture('blog', filename, data)
+        if pic:
+            filename = secure_filename(pic.filename)
+            split = os.path.splitext(filename)
+            suffix = p.id
+            filename = split[0] + '-' + str(suffix) + split[1]
+            data = pic.read()
+            upload_picture('blog', filename, data)
+        else:
+            filename = p.picture
 
         p.picture = filename
         p.title = form.title.data
@@ -139,6 +145,7 @@ def edit(id):
         db.session.add(p)
         db.session.commit()
         return redirect(url_for('blog.onepost', post_id=id))
+    form.picture.data = p.picture
     form.title.data = p.title
     form.subtitle.data = p.subtitle
     form.body.data = p.body
