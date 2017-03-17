@@ -43,6 +43,9 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     MAIL_SERVER = "smtp.gmail.com"
+    SQLALCHEMY_DATABASE_URI = \
+        'mysql+pymysql://{}:{}@localhost/ftown'.format(
+            os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
     MAIL_PORT = 587
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
