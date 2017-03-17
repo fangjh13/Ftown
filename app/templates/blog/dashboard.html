@@ -18,7 +18,7 @@
                     <th>ID</th>
                     <th>TITLE</th>
                     <th>PICTURE</th>
-                    <th>READS</th>
+                    <th>ViEWS</th>
                     <th>COMMENTS</th>
                     <th>LIKES</th>
                     <th>CTIME</th>
@@ -36,9 +36,9 @@
                                     <img src="{% if p.picture %}https://omv6w8gwo.qnssl.com/{{p.picture}}{% else %}#{% endif %}" height="30px" style="height: 30px">
                                 </a>
                             </td>
+                            <td>{{ p.views }}</td>
                             <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>{{ p.likes }}</td>
                             <td>{{ moment(p.timestamp).format('l') }}</td>
                             <td>{{ moment(p.mtimestamp).format('lll') }}</td>
                             <td width="130px">
