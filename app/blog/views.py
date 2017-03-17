@@ -98,7 +98,11 @@ def write():
             filename = secure_filename(p.filename)
               # unique filename
             split = os.path.splitext(filename)
-            id = Post.query.order_by(Post.id.desc()).first().id + 1
+            pre_post = Post.query.order_by(Post.id.desc()).first()
+            if pre_post:
+                id = pre_post.id + 1
+            else:
+                id = 1
             filename = split[0] + '-' + str(id) + split[1]
             data = p.read()
             upload_picture('blog', filename, data)

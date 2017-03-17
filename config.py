@@ -47,8 +47,8 @@ class ProductionConfig(Config):
         'mysql+pymysql://{}:{}@localhost/ftown'.format(
             os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
     MAIL_PORT = 587
-    MAIL_USE_TLS = False
-    MAIL_USE_SSL = True
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
 
 
 config = {
