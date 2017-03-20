@@ -75,6 +75,20 @@ class ProductionConfig(Config):
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
 
+        # TimeRotatingFileHandler
+        from logging.handlers import TimedRotatingFileHandler
+        time_rotating_handler = TimedRotatingFileHandler(
+            filename='time_rotating_warning.log',
+            when='D',
+            backupCount=7,
+            encoding='utf-8',
+            utc=True
+        )
+        time_rotating_handler.setLevel(logging.WARNING)
+        formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+        time_rotating_handler.setFormatter(formatter)
+        app.logger.addHandler(time_rotating_handler)
+
 
 
 config = {
