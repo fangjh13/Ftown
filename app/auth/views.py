@@ -5,6 +5,7 @@ from flask import redirect, render_template, request, url_for, flash
 from ..models import User
 from flask_login import login_user, logout_user
 from urllib.parse import urlparse, urljoin
+from .forms import RegisterForm
 
 
 # A function that ensures that a redirect target will lead to the same server
@@ -37,3 +38,11 @@ def logout():
     logout_user()
     flash('你已经退出登录')
     return redirect(url_for('auth.login'))
+
+
+@auth.route('/register', methods=['POST', 'GET'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        return redirect('/')
+    return render_template('auth/register.html', form=form)

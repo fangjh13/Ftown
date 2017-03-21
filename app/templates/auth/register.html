@@ -1,11 +1,26 @@
-{% extends '/blog/base.html' %}
+{% extends '/book/base.html' %}
 {% import '/bootstrap/wtf.html' as wtf %}
 
 {% block content %}
 <div class="container">
 <div class="row" style="margin-top:60px">
     <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
-        {{ wtf.quick_form(form) }}
+        <form method="POST">
+            <fildset>
+                <h2>注册</h2>
+                <hr class="colorgraph">
+                {{ wtf.form_field(form.email, placeholder='Email Address', class='form-control input-lg') }}
+                {{ wtf.form_field(form.username, placeholder='username', class='form-control input-lg') }}
+                {{ wtf.form_field(form.password, placeholder='Password', class='form-control input-lg') }}
+                {{ wtf.form_field(form.password2, placeholder='Confirm Password', class='form-control input-lg') }}
+                <hr class="colorgraph">
+                <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <input type="submit" class="btn btn-lg btn-success btn-block" value="Register">
+                        </div>
+                </div>
+            </fildset>
+        </form>
 	</div>
 </div>
 
