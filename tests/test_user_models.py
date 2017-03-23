@@ -72,3 +72,14 @@ class ModelTestCase(unittest.TestCase):
         self.assertFalse(u1.confirm(token))
         u2 = User.query.first()
         self.assertFalse(u2.confirmed == True)
+
+    def test_user_last_seen(self):
+        u = User()
+        db.session.add(u)
+        db.session.commit()
+        u1 = User.query.first()
+        first = u1.last_seen
+        time.sleep(2)
+        u1.ping()
+        u2 = User.query.first()
+        self.assertTrue(u2.last_seen != first)

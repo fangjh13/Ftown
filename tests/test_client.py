@@ -16,7 +16,7 @@ class FlaskClientCase(unittest.TestCase):
         db.create_all()
         self.client = self.app.test_client(use_cookies=True)
         # insert a user
-        u = User(email='test@example.com', password='1234')
+        u = User(email='test@example.com', password='123456', confirmed=True)
         db.session.add(u)
         db.session.commit()
         p = Post(title='test_post', body='post body', author=u)
@@ -44,7 +44,7 @@ class FlaskClientCase(unittest.TestCase):
     def test_user_login_logout(self):
         # login
         response = self.client.post(url_for('auth.login'), data=dict(
-            email='test@example.com', password='1234'), follow_redirects=True)
+            email='test@example.com', password='123456'), follow_redirects=True)
         self.assertTrue(b'Hello Blog' in response.data)
         # 'blog.dashboard' required login
         response = self.client.get(url_for('blog.dashboard'))
@@ -102,11 +102,26 @@ class FlaskClientCase(unittest.TestCase):
         response = self.client.get(url_for('auth.register'))
         self.assertTrue('注册'.encode('utf-8') in response.data)
 
-    def test_user_register_(self):
+    def test_user_register_invalid_password(self):
         response = self.client.post(url_for('auth.register'),
-                        data=dict(email='test@example.com',
+                        data=dict(email='test2@example.com',
                                   username='user',
                                   password='1234',
-                                  paswword='12345'),
+                                  password2='12345'),
                         follow_redirects=True)
         self.assertTrue('两次密码输入不一致'.encode('utf-8') in response.data)
+
+    def test_user_register_unconfirmed(self):
+        response = self.client.post(url_for('auth.register'),
+                                    data=dict(email='test2@example.com',
+                                              username='user',
+                                              password='12345',
+                                              password2='12345'),
+                                    follow_redirects=True)
+        self.assertTrue('用户验证邮箱已发送到您的邮箱，请查收'.encode('utf-8') in response.data)
+        response = self.client.post(url_for('auth.login'),
+                                    data=dict(email='test2@example.com',
+                                              password='12345'),
+                                    follow_redirects=True)
+        self.assertTrue('你的邮箱账户未激活'.encode('utf-8') in response.data)
+

@@ -19,6 +19,7 @@ class User(db.Model, UserMixin):
     register_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     confirmed = db.Column(db.BOOLEAN, default=False)
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return 'User %r' % self.username
@@ -52,6 +53,12 @@ class User(db.Model, UserMixin):
         db.session.add(self)
         db.session.commit()
         return True
+
+    # update last access
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
+        db.session.commit()
 
 # flask-login user_loader callback
 @login_manager.user_loader

@@ -1,0 +1,21 @@
+{% extends '/book/base.html' %}
+
+{% block title %}书床|发送验证邮件{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>
+        Hello, {{ current_user.username }}!
+    </h1>
+    <h3>你的邮箱账户未激活。</h3>
+    <p>用户未激活，请点击<a href="{{ url_for('auth.resend_confirm') }}">此链接</a>重新发送验证邮件，链接有效期为两小时请尽快验证。</p>
+
+    {#
+    <p>
+        Need another confirmation email?
+        <a href="{{ url_for('auth.resend_confirmation') }}">Click here</a>
+    </p>
+    #}
+</div>
+
+{% endblock %}

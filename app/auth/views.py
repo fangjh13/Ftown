@@ -20,6 +20,17 @@ def is_safe_url(target):
             ref_url.netloc == test_url.netloc
 
 
+@auth.before_app_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.ping()
+        if not current_user.confirmed \
+            and request.endpoint \
+            and request.endpoint[:5] != 'auth.' \
+            and request.endpoint != 'static':
+            return redirect(url_for('auth.unconfirmed'))
+
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
@@ -68,8 +79,32 @@ def register():
 def confirm(token):
     if current_user.confirmed:
         return redirect(url_for('blog.home'))
-    elif current_user.confirm:
+    elif not current_user.confirmed:
+        current_user.confirm(token)
         return redirect(url_for('blog.home'))
     else:
         flash('链接已过期或用户错误，请重新登入')
         return redirect(url_for('auth.login'))
+
+
+# resent confirm email
+@auth.route('/confirm')
+@login_required
+def resend_confirm():
+    token = current_user.generate_confirmation_token(expiration=2*60*60)
+    send_mail(subject="[书床]邮箱激活",
+              sender="书床管理员 <{}>".format(os.getenv('MAIL_USERNAME')),
+              recipients=[current_user.email],
+              prefix_template="/auth/mail/confirm",
+              user=current_user,
+              token=token)
+    flash('用户验证邮箱已重新发送到您的邮箱，请查收')
+    return redirect(url_for('auth.unconfirmed'))
+
+
+@auth.route('/unconfirmed')
+@login_required
+def unconfirmed():
+    if current_user.confirmed:
+        return redirect(url_for('blog.home'))
+    return render_template('auth/unconfirmed.html')
