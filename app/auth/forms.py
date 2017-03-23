@@ -2,7 +2,9 @@
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo
+from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo,\
+    ValidationError
+from ..models import User
 
 
 
@@ -17,3 +19,12 @@ class RegisterForm(FlaskForm):
     password = PasswordField('', validators=[
         DataRequired(), EqualTo('password2', message='两次密码输入不一致')])
     password2 = PasswordField('', validators=[DataRequired()])
+
+
+    def validate_email(form, field):
+        if User.query.filter_by(email=field.data).first():
+            raise ValidationError('邮箱已存在，请重新输入或登录')
+
+    def validate_username(form, field):
+        if User.query.filter_by(username=field.data).first():
+            raise ValidationError('用户名已存在，请重新输入')

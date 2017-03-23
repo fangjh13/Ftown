@@ -29,8 +29,9 @@ class FlaskClientCase(unittest.TestCase):
         self.app_context.pop()
 
     def test_main_index(self):
-        response = self.client.get(url_for('main.index'))
-        self.assertTrue(b'Hello world' in response.data)
+        response = self.client.get(url_for('main.index'),
+                                   follow_redirects=True)
+        self.assertTrue(b'Hello Blog' in response.data)
 
     def test_blog_index(self):
         response = self.client.get(url_for('blog.home'))
@@ -54,7 +55,7 @@ class FlaskClientCase(unittest.TestCase):
         response = self.client.get(url_for('blog.dashboard'),
                                    follow_redirects=True)
         self.assertTrue(response.status_code==200)
-        self.assertTrue(b'Forgot Password?' in response.data)
+        self.assertTrue('忘记密码?'.encode('utf-8') in response.data)
 
     def test_user_login_with_invalid(self):
         # login with invaild password
@@ -97,3 +98,15 @@ class FlaskClientCase(unittest.TestCase):
         p1 = Post.query.first()
         self.assertTrue(p1.likes==1)
 
+    def test_user_register_index(self):
+        response = self.client.get(url_for('auth.register'))
+        self.assertTrue('注册'.encode('utf-8') in response.data)
+
+    def test_user_register_(self):
+        response = self.client.post(url_for('auth.register'),
+                        data=dict(email='test@example.com',
+                                  username='user',
+                                  password='1234',
+                                  paswword='12345'),
+                        follow_redirects=True)
+        self.assertTrue('两次密码输入不一致'.encode('utf-8') in response.data)

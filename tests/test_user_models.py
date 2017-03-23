@@ -4,6 +4,7 @@
 import unittest
 from app.models import User, Post
 from app import create_app, db
+import time
 
 
 class ModelTestCase(unittest.TestCase):
@@ -50,3 +51,24 @@ class ModelTestCase(unittest.TestCase):
         p1 = Post.query.get(3)
         self.assertTrue(p1.author == u)
 
+    def test_user_validate_confirmed(self):
+        u = User()
+        db.session.add(u)
+        db.session.commit()
+        u1 = User.query.first()
+        self.assertTrue(u1.confirmed==False)
+        token = u1.generate_confirmation_token()
+        self.assertTrue(u1.confirm(token))
+        u2 = User.query.first()
+        self.assertTrue(u2.confirmed)
+
+    def test_user_invalidate_confirmed(self):
+        u = User()
+        db.session.add(u)
+        db.session.commit()
+        u1 = User.query.first()
+        token = u1.generate_confirmation_token(5)
+        time.sleep(6)
+        self.assertFalse(u1.confirm(token))
+        u2 = User.query.first()
+        self.assertFalse(u2.confirmed == True)

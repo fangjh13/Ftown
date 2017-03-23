@@ -6,6 +6,10 @@ from ..models import User
 from flask_login import login_user, logout_user
 from urllib.parse import urlparse, urljoin
 from .forms import RegisterForm
+from app import db
+from flask_login import current_user, login_required
+from ..email import send_mail
+import os
 
 
 # A function that ensures that a redirect target will lead to the same server
@@ -44,5 +48,28 @@ def logout():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        return redirect('/')
+        user = User(email=form.email.data, username=form.username.data,
+                    password=form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        send_mail(subject="[书床]邮箱激活",
+                  sender="书床管理员 <{}>".format(os.getenv('MAIL_USERNAME')),
+                  recipients=[user.email],
+                  prefix_template="/auth/mail/confirm",
+                  user=user,
+                  token=user.generate_confirmation_token(expiration=2*60*60))
+        flash('用户验证邮箱已发送到您的邮箱，请查收')
+        return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
+
+
+@auth.route('/confirm/<token>')
+@login_required
+def confirm(token):
+    if current_user.confirmed:
+        return redirect(url_for('blog.home'))
+    elif current_user.confirm:
+        return redirect(url_for('blog.home'))
+    else:
+        flash('链接已过期或用户错误，请重新登入')
+        return redirect(url_for('auth.login'))

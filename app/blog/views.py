@@ -69,7 +69,9 @@ def contact():
         form = request.form
         subject = '[IMPORTANT REPLY] someone contact to you'
         send_mail(subject, "Blog Admin <{0}>".format(os.environ.get('MAIL_USERNAME')),
-                  recipients=['616960344@qq.com'], template='/mail/mail_contact', form=form)
+                  recipients=['616960344@qq.com'],
+                  prefix_template='/mail/mail_contact',
+                  form=form)
         flash('提交成功，我会很快联系你的')
         redirect(url_for('.contact'))
     return render_template('/blog/contact.html')

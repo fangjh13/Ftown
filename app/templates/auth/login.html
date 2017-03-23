@@ -1,6 +1,8 @@
 {% extends "/book/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+{% block title %}书床|登录{% endblock %}
+
 {% block content %}
 <div class="container">
     <div class="row" style="margin-top:60px">
@@ -17,7 +19,7 @@
 
             <form role="form" method="POST">
                 <fieldset>
-                    <h2>Please Sign In</h2>
+                    <h2>请登录</h2>
                     <hr class="colorgraph">
                     <div class="form-group">
                         <input type="email" name="email" id="email" class="form-control input-lg" placeholder="Email Address">
@@ -26,17 +28,17 @@
                         <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password">
                     </div>
                     <span class="button-checkbox">
-                        <button type="button" class="btn" data-color="info">Remember Me</button>
+                        <button type="button" class="btn" data-color="info">记住我</button>
                         <input type="checkbox" name="remember_me" id="remember_me" checked="checked" class="hidden">
-                        <a href="" class="btn btn-link pull-right">Forgot Password?</a>
+                        <a href="" class="btn btn-link pull-right">忘记密码?</a>
                     </span>
                     <hr class="colorgraph">
                     <div class="row">
                         <div class="col-xs-6 col-sm-6 col-md-6">
-                            <input type="submit" class="btn btn-lg btn-success btn-block" value="Sign In">
+                            <input type="submit" class="btn btn-lg btn-success btn-block" value="登录">
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6">
-                            <a href="{{ url_for('auth.register') }}" class="btn btn-lg btn-primary btn-block">Register</a>
+                            <a href="{{ url_for('auth.register') }}" class="btn btn-lg btn-primary btn-block">注册</a>
                         </div>
                     </div>
                 </fieldset>
