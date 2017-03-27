@@ -89,6 +89,10 @@ class ProductionConfig(Config):
         time_rotating_handler.setFormatter(formatter)
         app.logger.addHandler(time_rotating_handler)
 
+        # handler proxy server headers
+        from werkzeug.contrib.fixers import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app)
+
 
 
 config = {

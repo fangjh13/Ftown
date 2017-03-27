@@ -79,10 +79,9 @@ def register():
 def confirm(token):
     if current_user.confirmed:
         return redirect(url_for('blog.home'))
-    elif not current_user.confirmed:
-        current_user.confirm(token)
-        return redirect(url_for('blog.home'))
     else:
+        if current_user.confirm(token):
+            return redirect(url_for('blog.home'))
         flash('链接已过期或用户错误，请重新登入')
         return redirect(url_for('auth.login'))
 
