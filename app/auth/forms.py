@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo,\
     ValidationError
 from ..models import User
+from flask_login import current_user
 
 
 
@@ -28,3 +29,23 @@ class RegisterForm(FlaskForm):
     def validate_username(form, field):
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('用户名已存在，请重新输入')
+
+
+class ChangeEmailForm(FlaskForm):
+    email = StringField('请输入新的邮箱', validators=[DataRequired(message='请输入邮箱地址'),
+                                                 Length(1, 64),
+                                                 Email(message="必须是合法的邮箱地址"),
+                                                 EqualTo('email2', message='两次邮箱输入不一致')])
+    email2 = StringField('请重复以上的邮箱', validators=[DataRequired(message='请输入邮箱地址'),
+                                                Length(1, 64),
+                                                Email(message="必须是合法的邮箱地址")])
+    password = PasswordField('账户密码', validators=[DataRequired()])
+    submit = SubmitField('更新邮箱')
+
+    def validate_email(form, field):
+        if User.query.filter_by(email=field.data).first():
+            raise ValidationError('邮箱已存在，请重新输入或登录')
+
+    def validate_password(form, field):
+        if not current_user.verify_password(field.data):
+            raise ValidationError('用户密码错误')

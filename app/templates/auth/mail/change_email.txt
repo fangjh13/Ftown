@@ -1,0 +1,5 @@
+尊敬的{{ user.username }}，您好,
+感谢您使用书床。
+请点击以下链接进行邮箱更换操作，以便开始使用您的账户，链接有效期为两个小时：
+{{ url_for('auth.change_email', token=token, _external=True) }}
+如果您并未此操作，可能是其他用户误输入了您的邮箱地址。请忽略此邮件。

@@ -5,7 +5,7 @@ from flask import redirect, render_template, request, url_for, flash
 from ..models import User
 from flask_login import login_user, logout_user
 from urllib.parse import urlparse, urljoin
-from .forms import RegisterForm
+from .forms import RegisterForm, ChangeEmailForm
 from app import db
 from flask_login import current_user, login_required
 from ..email import send_mail
@@ -107,3 +107,31 @@ def unconfirmed():
     if current_user.confirmed:
         return redirect(url_for('blog.home'))
     return render_template('auth/unconfirmed.html')
+
+
+@auth.route('/change-email', methods=['POST', 'GET'])
+@login_required
+def change_email_request():
+    form = ChangeEmailForm()
+    if form.validate_on_submit():
+        new_email = form.email.data
+        token = current_user.generate_change_email_token(new_email)
+        send_mail(subject="[书床]更换新邮箱",
+                  sender="书床管理员 <{}>".format(os.getenv('MAIL_USERNAME')),
+                  recipients=[new_email],
+                  prefix_template="/auth/mail/change_email",
+                  user=current_user,
+                  token=token)
+        flash('更换邮箱的邮件已重新发送到您新的邮箱，请查收')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/change_email.html', form=form)
+
+
+@auth.route('/change-email/<token>')
+@login_required
+def change_email(token):
+    if current_user.confirm_change_email(token):
+        flash('邮箱已经更改，请点击以下链接重新发送验证邮件完成验证')
+    else:
+        flash('更新邮箱验证失败，请重试')
+    return redirect(url_for('main.index'))

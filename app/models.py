@@ -47,7 +47,7 @@ class User(db.Model, UserMixin):
             data = s.loads(token)
         except:
             return False
-        if data['confirm'] != self.id:
+        if data.get('confirm') != self.id:
             return False
         self.confirmed = True
         db.session.add(self)
@@ -59,6 +59,27 @@ class User(db.Model, UserMixin):
         self.last_seen = datetime.utcnow()
         db.session.add(self)
         db.session.commit()
+
+    # generate change email token
+    def generate_change_email_token(self, new_email, expiration=2*60*60):
+        s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'],
+                                            expires_in=expiration)
+        return s.dumps({'change_email': self.id,
+                        'email_address': new_email})
+
+    # change user email
+    def confirm_change_email(self, token):
+        s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        if data.get('change_email') == self.id:
+            self.email = data.get('email_address')
+            db.session.add(self)
+            db.session.commit()
+            return True
+        return False
 
 # flask-login user_loader callback
 @login_manager.user_loader
