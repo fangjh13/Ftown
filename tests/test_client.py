@@ -6,6 +6,7 @@ from app import create_app, db, mail
 from app.models import User, Post
 from flask import url_for
 import os
+from flask_login import login_user
 
 
 class FlaskClientCase(unittest.TestCase):
@@ -31,7 +32,7 @@ class FlaskClientCase(unittest.TestCase):
     def test_main_index(self):
         response = self.client.get(url_for('main.index'),
                                    follow_redirects=True)
-        self.assertTrue(b'Hello Blog' in response.data)
+        self.assertTrue(b'Fython' in response.data)
 
     def test_blog_index(self):
         response = self.client.get(url_for('blog.home'))
@@ -124,4 +125,21 @@ class FlaskClientCase(unittest.TestCase):
                                               password='12345'),
                                     follow_redirects=True)
         self.assertTrue('你的邮箱账户未激活'.encode('utf-8') in response.data)
+
+    def test_change_email(self):
+        # login user
+        self.client.post(url_for('auth.login'), data=dict(
+            email='test@example.com', password='123456'), follow_redirects=True)
+        response = self.client.post(url_for('auth.change_email_request'),
+                                    data=dict(email='change2email@example.com',
+                                              email2='change2email@example.com',
+                                              password='wrong password'),
+                                    follow_redirects=True)
+        self.assertTrue('用户密码错误'.encode('utf-8') in response.data)
+        response = self.client.post(url_for('auth.change_email_request'),
+                                    data=dict(email='change2email@example.com',
+                                              email2='change2email@example.com',
+                                              password='123456'),
+                                    follow_redirects=True)
+        self.assertTrue('更换邮箱的邮件已重新发送到您新的邮箱'.encode('utf-8') in response.data)
 

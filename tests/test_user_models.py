@@ -83,3 +83,15 @@ class ModelTestCase(unittest.TestCase):
         u1.ping()
         u2 = User.query.first()
         self.assertTrue(u2.last_seen != first)
+
+    def test_change_mail_token(self):
+        u = User(email='test@example.com')
+        db.session.add(u)
+        db.session.commit()
+        u = User.query.first()
+        token = u.generate_change_email_token('new_emial@example.com', 3)
+        self.assertTrue(token is not None)
+        self.assertTrue(u.confirm_change_email(token))
+        # token timeout
+        time.sleep(5)
+        self.assertFalse(u.confirm_change_email(token))
