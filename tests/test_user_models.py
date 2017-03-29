@@ -84,14 +84,27 @@ class ModelTestCase(unittest.TestCase):
         u2 = User.query.first()
         self.assertTrue(u2.last_seen != first)
 
-    def test_change_mail_token(self):
+    def test_change_mail(self):
         u = User(email='test@example.com')
         db.session.add(u)
         db.session.commit()
         u = User.query.first()
-        token = u.generate_change_email_token('new_emial@example.com', 3)
+        token = u.generate_change_email_token('new_emial@example.com', 2)
         self.assertTrue(token is not None)
         self.assertTrue(u.confirm_change_email(token))
         # token timeout
-        time.sleep(5)
+        time.sleep(3)
         self.assertFalse(u.confirm_change_email(token))
+
+    def test_generate_reset_password(self):
+        u = User(email='test@example.com', password='123456')
+        db.session.add(u)
+        db.session.commit()
+        u = User.query.first()
+        token = u.generate_reset_password(2)
+        self.assertTrue(token is not None)
+        self.assertTrue(u.confirm_reset_password(token, 'abc'))
+        time.sleep(3)
+        self.assertFalse(u.confirm_reset_password(token, 'def'))
+        u1 = User.query.first()
+        self.assertTrue(u1.verify_password('abc'))

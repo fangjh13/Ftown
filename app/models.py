@@ -81,6 +81,26 @@ class User(db.Model, UserMixin):
             return True
         return False
 
+    # reset password
+    def generate_reset_password(self, expiration=2*60*60):
+        s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'],
+                                            expires_in=expiration)
+        return s.dumps({'reset_password': self.id})
+
+    def confirm_reset_password(self, token, new_password):
+        s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        if data.get('reset_password') == self.id:
+            self.password = new_password
+            db.session.add(self)
+            db.session.commit()
+            return True
+        return False
+
+
 # flask-login user_loader callback
 @login_manager.user_loader
 def load_user(user_id):

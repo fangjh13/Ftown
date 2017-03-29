@@ -30,7 +30,7 @@
                     <span class="button-checkbox">
                         <button type="button" class="btn" data-color="info">记住我</button>
                         <input type="checkbox" name="remember_me" id="remember_me" checked="checked" class="hidden">
-                        <a href="" class="btn btn-link pull-right">忘记密码?</a>
+                        <a href="{{ url_for('auth.reset_password_request') }}" class="btn btn-link pull-right">忘记密码?</a>
                     </span>
                     <hr class="colorgraph">
                     <div class="row">

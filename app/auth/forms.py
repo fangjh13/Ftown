@@ -33,9 +33,9 @@ class RegisterForm(FlaskForm):
 
 class ChangeEmailForm(FlaskForm):
     email = StringField('请输入新的邮箱', validators=[DataRequired(message='请输入邮箱地址'),
-                                                 Length(1, 64),
-                                                 Email(message="必须是合法的邮箱地址"),
-                                                 EqualTo('email2', message='两次邮箱输入不一致')])
+                                        Length(1, 64),
+                                        Email(message="必须是合法的邮箱地址"),
+                                        EqualTo('email2', message='两次邮箱输入不一致')])
     email2 = StringField('请重复以上的邮箱', validators=[DataRequired(message='请输入邮箱地址'),
                                                 Length(1, 64),
                                                 Email(message="必须是合法的邮箱地址")])
@@ -49,3 +49,22 @@ class ChangeEmailForm(FlaskForm):
     def validate_password(form, field):
         if not current_user.verify_password(field.data):
             raise ValidationError('用户密码错误')
+
+
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('', validators=[DataRequired(message='请输入邮箱地址'),
+                                            Length(1, 64),
+                                            Email(message='必须是合法的邮箱地址')])
+
+    def validate_email(form, field):
+        if not User.query.filter_by(email=field.data).first():
+            raise ValidationError('用户邮箱不存在')
+
+
+class ResetPasswordForm(FlaskForm):
+    email = StringField('', validators=[DataRequired(message='请输入邮箱地址'),
+                                        Length(1, 64),
+                                        Email(message='必须是合法的邮箱地址')])
+    password = PasswordField('', validators=[DataRequired(),
+                                EqualTo('password2', message='两次密码输入不一致')])
+    password2 = PasswordField('', validators=[DataRequired()])

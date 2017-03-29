@@ -1,0 +1,5 @@
+尊敬的{{ user.username }}，您好,
+感谢您使用书床。
+如果你忘记了密码，请点击以下链接进行密码重置，链接有效期为两个小时：
+{{ url_for('auth.reset_password', token=token, _external=True) }}
+如果您并未执行此操作，可能是其他用户误输入了您的邮箱地址。请忽略此邮件。

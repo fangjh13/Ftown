@@ -5,7 +5,8 @@ from flask import redirect, render_template, request, url_for, flash
 from ..models import User
 from flask_login import login_user, logout_user
 from urllib.parse import urlparse, urljoin
-from .forms import RegisterForm, ChangeEmailForm
+from .forms import RegisterForm, ChangeEmailForm, ResetPasswordForm, \
+    ResetPasswordRequestForm
 from app import db
 from flask_login import current_user, login_required
 from ..email import send_mail
@@ -135,3 +136,36 @@ def change_email(token):
     else:
         flash('更新邮箱验证失败，请重试')
     return redirect(url_for('main.index'))
+
+
+@auth.route('/reset', methods=['GET', 'POST'])
+def reset_password_request():
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        user = User.query.filter_by(email=email).first_or_404()
+        token = user.generate_reset_password()
+        send_mail(subject="[书床]重置密码",
+                  sender="书床管理员 <{}>".format(os.getenv('MAIL_USERNAME')),
+                  recipients=[email],
+                  prefix_template="/auth/mail/reset",
+                  user=user,
+                  token=token)
+        flash('重置密码的邮件已发送你的邮箱，请尽快去修改')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/reset_password_request.html', form=form)
+
+
+@auth.route('/reset/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        user = User.query.filter_by(email=email).first_or_404()
+        if user.confirm_reset_password(token, password):
+            flash('用户密码已更新，请重新登录')
+        else:
+            flash('链接非法或已过期')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/reset_password.html', form=form)
