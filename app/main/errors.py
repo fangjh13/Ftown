@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from . import blog
+from . import main
 from flask import make_response, jsonify, request, redirect, url_for
 
 
-@blog.app_errorhandler(404)
+@main.app_errorhandler(404)
 def not_found(e):
     if 'application/json' in request.accept_mimetypes and \
         not 'txt/html' in request.accept_mimetypes:

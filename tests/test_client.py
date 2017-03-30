@@ -143,3 +143,28 @@ class FlaskClientCase(unittest.TestCase):
                                     follow_redirects=True)
         self.assertTrue('更换邮箱的邮件已重新发送到您新的邮箱'.encode('utf-8') in response.data)
 
+    def test_reset_password_request(self):
+        response = self.client.get(url_for('auth.reset_password_request'))
+        self.assertTrue('重置密码'.encode('utf-8') in response.data)
+        response = self.client.post(url_for('auth.reset_password_request'),
+                                    data=dict(email='not_exist@example.com'),
+                                    follow_redirects=True)
+        self.assertTrue('用户邮箱不存在'.encode('utf-8') in response.data)
+
+
+    def test_reset_password(self):
+        response = self.client.get(url_for('auth.reset_password', token='errorToken'))
+        self.assertTrue('重置密码'.encode('utf-8') in response.data)
+        response = self.client.post(url_for('auth.reset_password', token='errorToken'),
+                                    data=dict(email='test@example.com',
+                                              password='123456',
+                                              password2='123'),
+                                    follow_redirects=True)
+        self.assertTrue('两次密码输入不一致'.encode('utf-8') in response.data)
+        response = self.client.post(url_for('auth.reset_password', token='errorToken'),
+                                    data=dict(email='test@example.com',
+                                              password='1',
+                                              password2='1'),
+                                    follow_redirects=True)
+        self.assertTrue('链接非法或已过期'.encode('utf-8') in response.data)
+
