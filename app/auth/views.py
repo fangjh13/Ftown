@@ -3,12 +3,11 @@
 from . import auth
 from flask import redirect, render_template, request, url_for, flash
 from ..models import User
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user, login_required
 from urllib.parse import urlparse, urljoin
 from .forms import RegisterForm, ChangeEmailForm, ResetPasswordForm, \
     ResetPasswordRequestForm
 from app import db
-from flask_login import current_user, login_required
 from ..email import send_mail
 import os
 
@@ -140,6 +139,8 @@ def change_email(token):
 
 @auth.route('/reset', methods=['GET', 'POST'])
 def reset_password_request():
+    if not current_user.is_anonymous:
+        return redirect(url_for('main.index'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
         email = form.email.data

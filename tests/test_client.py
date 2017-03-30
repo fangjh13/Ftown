@@ -6,7 +6,6 @@ from app import create_app, db, mail
 from app.models import User, Post
 from flask import url_for
 import os
-from flask_login import login_user
 
 
 class FlaskClientCase(unittest.TestCase):
