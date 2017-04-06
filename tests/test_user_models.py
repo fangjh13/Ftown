@@ -108,3 +108,13 @@ class ModelTestCase(unittest.TestCase):
         self.assertFalse(u.confirm_reset_password(token, 'def'))
         u1 = User.query.first()
         self.assertTrue(u1.verify_password('abc'))
+
+    def test_change_user_password(self):
+        u = User(email='test@example.com', password='123456')
+        db.session.add(u)
+        db.session.commit()
+        u = User.query.first()
+        u.change_password('123')
+        u = User.query.first()
+        self.assertFalse(u.verify_password('123456'))
+        self.assertTrue(u.verify_password('123'))

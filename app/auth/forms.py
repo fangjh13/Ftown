@@ -68,3 +68,17 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('', validators=[DataRequired(),
                                 EqualTo('password2', message='两次密码输入不一致')])
     password2 = PasswordField('', validators=[DataRequired()])
+
+
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField('', validators=[
+        DataRequired(message='请输入原始密码'), Length(1, 64)])
+    password = PasswordField('', validators=[DataRequired(message='请输入密码'),
+                                             Length(1, 64),
+                                    EqualTo('password2', message='两次密码不一致')])
+    password2 = PasswordField('', validators=[DataRequired(message='请输入密码'),
+                                              Length(1, 64)])
+
+    def validate_old_password(form, field):
+        if not current_user.verify_password(field.data):
+            raise ValidationError('旧密码输入不正确')

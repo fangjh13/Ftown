@@ -100,6 +100,14 @@ class User(db.Model, UserMixin):
             return True
         return False
 
+    def change_password(self, new_password):
+        if new_password:
+            self.password = new_password
+            db.session.add(self)
+            db.session.commit()
+            return True
+        return False
+
 
 # flask-login user_loader callback
 @login_manager.user_loader

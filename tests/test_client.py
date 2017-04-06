@@ -67,17 +67,17 @@ class FlaskClientCase(unittest.TestCase):
     def test_contact_send_email(self):
         ## can receive a letter must set `MAIL_SUPPRESS_SEND = False`
 
-        #response = self.client.post(url_for('blog.contact'), data=dict(
-        #    name='unittest', email='unittest@example.com',
-        #    message='unittest message'))
-        #self.assertTrue('提交成功，我会很快联系你的'.encode('utf-8') in response.data)
-        # keep track of dispatched emails
-        with mail.record_messages() as outbox:
-            mail.send_message(subject='unittest', body='test',
-                sender="Blog Unittest <{0}>".format(os.environ.get('MAIL_USERNAME')),
-                recipients=['616960344@qq.com'])
-            self.assertTrue(len(outbox) == 1)
-            self.assertTrue(outbox[0].subject == 'unittest')
+        response = self.client.post(url_for('blog.contact'), data=dict(
+           name='unittest', email='unittest@example.com',
+           message='unittest message'))
+        self.assertTrue('提交成功，我会很快联系你的'.encode('utf-8') in response.data)
+        # # keep track of dispatched emails
+        # with mail.record_messages() as outbox:
+        #     mail.send_message(subject='unittest', body='test',
+        #         sender="Blog Unittest <{0}>".format(os.environ.get('MAIL_USERNAME')),
+        #         recipients=['616960344@qq.com'])
+        #     self.assertTrue(len(outbox) == 1)
+        #     self.assertTrue(outbox[0].subject == 'unittest')
 
     def test_post_views(self):
         p = Post.query.first()
@@ -118,7 +118,8 @@ class FlaskClientCase(unittest.TestCase):
                                               password='12345',
                                               password2='12345'),
                                     follow_redirects=True)
-        self.assertTrue('用户验证邮箱已发送到您的邮箱，请查收'.encode('utf-8') in response.data)
+        self.assertTrue('用户验证邮箱已发送到您的邮箱，请查收'.encode('utf-8')
+                        in response.data)
         response = self.client.post(url_for('auth.login'),
                                     data=dict(email='test2@example.com',
                                               password='12345'),
@@ -140,7 +141,8 @@ class FlaskClientCase(unittest.TestCase):
                                               email2='change2email@example.com',
                                               password='123456'),
                                     follow_redirects=True)
-        self.assertTrue('更换邮箱的邮件已重新发送到您新的邮箱'.encode('utf-8') in response.data)
+        self.assertTrue('更换邮箱的邮件已重新发送到您新的邮箱'.encode('utf-8')
+                        in response.data)
 
     def test_reset_password_request(self):
         response = self.client.get(url_for('auth.reset_password_request'))
@@ -152,18 +154,33 @@ class FlaskClientCase(unittest.TestCase):
 
 
     def test_reset_password(self):
-        response = self.client.get(url_for('auth.reset_password', token='errorToken'))
+        response = self.client.get(url_for('auth.reset_password',
+                                           token='errorToken'))
         self.assertTrue('重置密码'.encode('utf-8') in response.data)
-        response = self.client.post(url_for('auth.reset_password', token='errorToken'),
+        response = self.client.post(url_for('auth.reset_password',
+                                            token='errorToken'),
                                     data=dict(email='test@example.com',
                                               password='123456',
                                               password2='123'),
                                     follow_redirects=True)
         self.assertTrue('两次密码输入不一致'.encode('utf-8') in response.data)
-        response = self.client.post(url_for('auth.reset_password', token='errorToken'),
+        response = self.client.post(url_for('auth.reset_password',
+                                    token='errorToken'),
                                     data=dict(email='test@example.com',
                                               password='1',
                                               password2='1'),
                                     follow_redirects=True)
         self.assertTrue('链接非法或已过期'.encode('utf-8') in response.data)
 
+    def test_change_password(self):
+        response = self.client.get(url_for('auth.change_password'),
+                                   follow_redirects=True)
+        self.assertTrue('用户未登录，请先登录'.encode('utf-8') in response.data)
+        response = self.client.post(url_for('auth.login'), data=dict(
+            email='test@example.com', password='123456'), follow_redirects=True)
+        response = self.client.post(url_for('auth.change_password'),
+                                    data=dict(old_password='123',
+                                              password='111',
+                                              password2='111'),
+                                    follow_redirects=True)
+        self.assertTrue('旧密码输入不正确'.encode('utf-8') in response.data)

@@ -3,10 +3,11 @@
 from . import auth
 from flask import redirect, render_template, request, url_for, flash
 from ..models import User
-from flask_login import login_user, logout_user, current_user, login_required
+from flask_login import login_user, logout_user, current_user, \
+    login_required
 from urllib.parse import urlparse, urljoin
 from .forms import RegisterForm, ChangeEmailForm, ResetPasswordForm, \
-    ResetPasswordRequestForm
+    ResetPasswordRequestForm, ChangePasswordForm
 from app import db
 from ..email import send_mail
 import os
@@ -170,3 +171,19 @@ def reset_password(token):
             flash('链接非法或已过期')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
+
+
+@auth.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    user = current_user
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        password = form.password.data
+        if user.change_password(password):
+            flash('密码已更新，请重新登录')
+            logout_user()
+        else:
+            flash('密码更新失败')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/change_password.html', form=form)
