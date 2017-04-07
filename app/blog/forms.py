@@ -8,7 +8,7 @@ from wtforms.validators import Length, DataRequired
 
 # Post a new blog article form
 class WriteForm(FlaskForm):
-    picture = FileField('Picture limited 16MB', validators=[
+    picture = FileField('Picture limited 10MB', validators=[
         FileAllowed(['jpg', 'png', 'jpeg'], 'Image only!')
     ])
     title = StringField('Title', validators=[DataRequired(), Length(1, 100)])
