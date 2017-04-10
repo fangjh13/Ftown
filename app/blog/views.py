@@ -147,7 +147,6 @@ def edit(id):
         p.title = form.title.data
         p.subtitle = form.subtitle.data
         p.body = form.body.data
-        p.mtimestamp = datetime.utcnow()
         db.session.add(p)
         db.session.commit()
         return redirect(url_for('blog.onepost', post_id=id))

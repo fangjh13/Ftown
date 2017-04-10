@@ -3,8 +3,9 @@
 from datetime import datetime
 from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin, current_user
+from flask_login import UserMixin
 from flask import current_app
+from sqlalchemy import event
 from markdown import markdown
 import bleach
 from itsdangerous import TimedJSONWebSignatureSerializer
@@ -148,7 +149,13 @@ class Post(db.Model):
         target.body_html = bleach.clean(markdown(value, output_format='html'),
                         tags=allowed_tags, attributes=attrs, strip=True)
 
+    @staticmethod
+    def if_modified_update_mtimestamp(target, value, oldvalue, initiator):
+        if value != oldvalue:
+            target.mtimestamp = datetime.utcnow()
+
 db.event.listen(Post.body, 'set', Post.on_changed_body)
+db.event.listen(Post.body, 'set', Post.if_modified_update_mtimestamp)
 
 
 class Comment(db.Model):
@@ -156,5 +163,24 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ctime = db.Column(db.DateTime, default=datetime.utcnow)
     body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+    def __repr__(self):
+        return 'Comment in post %r' % self.post_id
+
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p']
+        attrs = {
+            '*': ['class'],
+            'a': ['href', 'rel', 'title'],
+            'img': ['alt', 'src']
+        }
+        target.body_html = bleach.clean(markdown(value, output_format='html'),
+                        tags=allowed_tags, attributes=attrs, strip=True)
+
+db.event.listen(Comment.body, 'set', Comment.on_changed_body)
