@@ -14,4 +14,10 @@ class WriteForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(1, 100)])
     subtitle = StringField('Subtitle', validators=[Length(0, 120)])
     body = PageDownField('Body Content: PS. support markdown')
-    submit = SubmitField('Submit', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class CommentForm(FlaskForm):
+    content = PageDownField('', validators=[DataRequired()])
+    submit = SubmitField('提交')
+

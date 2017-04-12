@@ -409,3 +409,13 @@ body {
   font-size: 16px;
   color: #aea79f;
 }
+div.comment-header {
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e7e9ee;
+}
+div.current-user-header{
+    float: right;
+}
+div.comment-login-area {
+  margin-top: 15px;
+}

@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 
 from app import db
 from . import blog
-from .forms import WriteForm
+from .forms import WriteForm, CommentForm
 from ..email import send_mail
 from ..models import User, Post
 from .qiniu_ftown import upload_picture
@@ -48,19 +48,21 @@ def about():
 @blog.route('/post')
 def post():
     post = Post.query.order_by(Post.timestamp.desc()).first_or_404()
+    form = CommentForm()
     post.views += 1
     db.session.add(post)
     db.session.commit()
-    return render_template('/blog/post.html', post=post)
+    return render_template('/blog/post.html', post=post, form=form)
 
 
 @blog.route('/post/<int:post_id>')
 def onepost(post_id):
     post = Post.query.get_or_404(post_id)
+    form = CommentForm()
     post.views += 1
     db.session.add(post)
     db.session.commit()
-    return render_template('/blog/post.html', post=post)
+    return render_template('/blog/post.html', post=post, form=form)
 
 
 @blog.route('/contact', methods=["GET", "POST"])

@@ -1,4 +1,5 @@
 {% extends '/blog/base-blog.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block title %}{{ post.title }} | Fython's Blog{% endblock %}
 {% block content %}
@@ -27,24 +28,26 @@
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     {{ post.body_html | safe }}
                     <div class="post-views">浏览量 {{ post.views }}</div>
-
                     <hr>
-
-                    <div id="disqus_thread"></div>
-                    <script>
-                        var disqus_config = function () {
-                        this.page.url = '{{ request.url }}';
-                        this.page.identifier = '{{ post.id }}';
-                        };
-
-                        (function() { // DON'T EDIT BELOW THIS LINE
-                            var d = document, s = d.createElement('script');
-                            s.src = 'https://fython.disqus.com/embed.js';
-                            s.setAttribute('data-timestamp', +new Date());
-                            (d.head || d.body).appendChild(s);
-                        })();
-                    </script>
-                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <div class="comment-header">
+                        {% if current_user.is_authenticated %}
+                            <div class="current-user-header">{{ current_user.username }}</div>
+                        {% endif %}
+                        <div class="comment-count-header">0 评论 &nbsp;&nbsp;&nbsp;<strong><a href="#">{{ post.author.username }}'s Blog</a></strong></div>
+                    </div>
+                    {% if current_user.is_authenticated %}
+                    <div class="comment-content-area">
+                        <form method="POST">
+                        {{ form.csrf_token }}
+                        {{ wtf.form_field(form.content) }}
+                        {{ wtf.form_field(form.submit) }}
+                        </form>
+                    </div>
+                    {% else %}
+                    <div class="comment-login-area">
+                        您还没有登录，请<a href="{{ url_for('auth.login') }}"><strong>登录</strong></a>后评论。
+                    </div>
+                    {% endif %}
 
                 </div>
             </div>
