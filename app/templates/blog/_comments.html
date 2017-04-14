@@ -3,9 +3,11 @@
         {% for comment in comments %}
         <li class="comment">
             <div class="comment-content">
-				<div class="comment-date">{{ moment(comment.ctime).fromNow() }}</div>
-				<div class="comment-author"><a href="">{{ comment.author }}</a></div>
-				<div class="comment-body">{{ comment.body_html }}</div>
+                <div class="list-comment-header">
+                    <div class="comment-author"><a href="">{{ comment.author.username }}</a></div>
+                    <div class="comment-date">{{ moment(comment.ctime).fromNow() }}</div>
+                </div>
+				<div class="comment-body">{{ comment.body_html | safe }}</div>
 			</div>
         </li>
         {% endfor %}

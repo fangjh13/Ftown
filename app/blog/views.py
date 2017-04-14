@@ -49,20 +49,24 @@ def about():
 def post():
     post = Post.query.order_by(Post.timestamp.desc()).first_or_404()
     form = CommentForm()
+    comments = post.comments.all()
     post.views += 1
     db.session.add(post)
     db.session.commit()
-    return render_template('/blog/post.html', post=post, form=form)
+    return render_template('/blog/post.html', post=post, form=form,
+                           comments=comments)
 
 
 @blog.route('/post/<int:post_id>')
 def onepost(post_id):
     post = Post.query.get_or_404(post_id)
     form = CommentForm()
+    comments = post.comments.all()
     post.views += 1
     db.session.add(post)
     db.session.commit()
-    return render_template('/blog/post.html', post=post, form=form)
+    return render_template('/blog/post.html', post=post, form=form,
+                           comments=comments)
 
 
 @blog.route('/contact', methods=["GET", "POST"])
@@ -70,7 +74,8 @@ def contact():
     if request.method == "POST":
         form = request.form
         subject = '[IMPORTANT REPLY] someone contact to you'
-        send_mail(subject, "Blog Admin <{0}>".format(os.environ.get('MAIL_USERNAME')),
+        send_mail(subject,
+                  "Blog Admin <{0}>".format(os.environ.get('MAIL_USERNAME')),
                   recipients=['616960344@qq.com'],
                   prefix_template='/mail/mail_contact',
                   form=form)

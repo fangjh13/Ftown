@@ -48,7 +48,9 @@
                         您还没有登录，请<a href="{{ url_for('auth.login') }}"><strong>登录</strong></a>后评论。
                     </div>
                     {% endif %}
-
+                    <div class="comment-content">
+                    {% include 'blog/_comments.html' %}
+                    </div>
                 </div>
             </div>
         </div>

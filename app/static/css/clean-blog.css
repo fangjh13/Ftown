@@ -419,3 +419,12 @@ div.current-user-header{
 div.comment-login-area {
   margin-top: 15px;
 }
+div.comment-content-area {
+  padding-bottom: 15px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #e7e9ee;
+}
+ul.comments {
+  list-style-type: none;
+  padding-left: 0px;
+}
