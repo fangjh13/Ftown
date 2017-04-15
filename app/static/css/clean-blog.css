@@ -418,13 +418,25 @@ div.current-user-header{
 }
 div.comment-login-area {
   margin-top: 15px;
+  margin-bottom: 15px;
 }
 div.comment-content-area {
   padding-bottom: 15px;
-  margin-bottom: 10px;
   border-bottom: 2px solid #e7e9ee;
 }
 ul.comments {
   list-style-type: none;
   padding-left: 0px;
+}
+div.comment-date {
+  float: right;
+  font-size: 12px;
+  margin-top: 6px;
+}
+div.comment-author {
+  font-size: 18px;
+}
+div.comment-block {
+  border-bottom: solid 1px #dddddd;
+  padding-bottom: 7px;
 }

@@ -27,8 +27,8 @@ class CommentCase(unittest.TestCase):
 
     def test_body_html_event(self):
         c = Comment.query.first()
-        c.body = 'new body'
+        c.body = '`code`'
         db.session.add(c)
         db.session.commit()
         c = Comment.query.first()
-        self.assertTrue(c.body_html == '<p>new body</p>')
+        self.assertTrue(c.body_html == '<code>code</code>')
