@@ -37,7 +37,8 @@ def home():
     pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
         page, 4, error_out=False)
     posts = pagination.items
-    return render_template('/blog/home.html', posts=posts, pagination=pagination)
+    return render_template('/blog/home.html', posts=posts,
+                           pagination=pagination, endpoint='blog.home')
 
 
 @blog.route('/about')
@@ -45,16 +46,30 @@ def about():
     return render_template('/blog/about.html')
 
 
+@blog.route('/post/<username>')
+def user_post(username):
+    page = request.args.get('page', 1, type=int)
+    u = User.query.filter_by(username=username).first_or_404()
+    pagination = Post.query.filter_by(author=u
+                                      ).order_by(Post.timestamp.desc()).paginate(
+        page, 4, error_out=False)
+    posts = pagination.items
+    return render_template('/blog/home.html', posts=posts,
+                           pagination=pagination, endpoint='blog.user_post',
+                           username=username)
+
+
 @blog.route('/post')
 def post():
     post = Post.query.order_by(Post.timestamp.desc()).first_or_404()
     form = CommentForm()
     comments = post.comments.all()
+    count = post.comments.count()
     post.views += 1
     db.session.add(post)
     db.session.commit()
     return render_template('/blog/post.html', post=post, form=form,
-                           comments=comments)
+                           comments=comments, count=count)
 
 
 @blog.route('/post/<int:post_id>')
@@ -62,11 +77,12 @@ def onepost(post_id):
     post = Post.query.get_or_404(post_id)
     form = CommentForm()
     comments = post.comments.all()
+    count = post.comments.count()
     post.views += 1
     db.session.add(post)
     db.session.commit()
     return render_template('/blog/post.html', post=post, form=form,
-                           comments=comments)
+                           comments=comments, count=count)
 
 
 @blog.route('/contact', methods=["GET", "POST"])

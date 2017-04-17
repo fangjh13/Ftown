@@ -33,7 +33,7 @@
                         {% if current_user.is_authenticated %}
                             <div class="current-user-header">{{ current_user.username }}</div>
                         {% endif %}
-                        <div class="comment-count-header">0 评论 &nbsp;&nbsp;&nbsp;<strong><a href="#">{{ post.author.username }}'s Blog</a></strong></div>
+                        <div class="comment-count-header">{{ count }} 评论 &nbsp;&nbsp;&nbsp;<strong><a href="{{ url_for('blog.user_post', username=post.author.username) }}">{{ post.author.username }}'s Blog</a></strong></div>
                     </div>
                     {% if current_user.is_authenticated %}
                     <div class="comment-content-area">

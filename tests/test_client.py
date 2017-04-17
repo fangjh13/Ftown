@@ -2,10 +2,9 @@
 
 
 import unittest
-from app import create_app, db, mail
-from app.models import User, Post
+from app import create_app, db
+from app.models import User, Post, Comment
 from flask import url_for
-import os
 
 
 class FlaskClientCase(unittest.TestCase):
@@ -16,11 +15,15 @@ class FlaskClientCase(unittest.TestCase):
         db.create_all()
         self.client = self.app.test_client(use_cookies=True)
         # insert a user
-        u = User(email='test@example.com', password='123456', confirmed=True)
+        u = User(email='test@example.com', username='test',
+                 password='123456', confirmed=True)
         db.session.add(u)
         db.session.commit()
         p = Post(title='test_post', body='post body', author=u)
         db.session.add(p)
+        db.session.commit()
+        c = Comment(body='comment body', author=u, post=p)
+        db.session.add(c)
         db.session.commit()
 
     def tearDown(self):
@@ -86,6 +89,7 @@ class FlaskClientCase(unittest.TestCase):
         p = Post.query.first()
         response = self.client.get('/blog/post/1')
         self.assertTrue("浏览量 2".encode('utf-8') in response.data)
+        self.assertTrue(b'comment body' in response.data)
         p = Post.query.first()
         self.assertTrue(p.views==2)
 
@@ -184,3 +188,11 @@ class FlaskClientCase(unittest.TestCase):
                                               password2='111'),
                                     follow_redirects=True)
         self.assertTrue('旧密码输入不正确'.encode('utf-8') in response.data)
+
+    def test_single_user_posts(self):
+        response = self.client.get(url_for('blog.user_post', username='test'))
+        self.assertTrue(b'test_post' in response.data)
+
+    def test_single_post(self):
+        response = self.client.get(url_for('blog.onepost', post_id=1))
+        self.assertTrue(b'comment body' in response.data)

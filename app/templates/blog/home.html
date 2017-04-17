@@ -27,7 +27,7 @@
                 <!--Pagination-->
                 {% if pagination %}
                     {% import '/blog/_macros.html' as macros %}
-                    {{ macros.pagination_widget(pagination, 'blog.home') }}
+                    {{ macros.pagination_widget(pagination, endpoint, username=username) }}
                 {% endif %}
             </div>
         </div>

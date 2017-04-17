@@ -2,9 +2,9 @@
     <ul class="pager">
         <li class="next">
             {% if pagination.has_next %}
-                <a href="{{ url_for('blog.home', page=pagination.next_num) }}#post">Older Posts &rarr;</a>
+                <a href="{{ url_for(endpoint, page=pagination.next_num, **kwargs) }}#post">Older Posts &rarr;</a>
             {% else %}
-                <a href="{{ url_for('blog.home') }}">&slarr; Back First</a>
+                <a href="{{ url_for(endpoint, **kwargs) }}">&slarr; Back First</a>
             {% endif %}
         </li>
     </ul>
