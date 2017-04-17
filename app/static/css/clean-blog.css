@@ -437,6 +437,7 @@ div.comment-author {
   font-size: 18px;
 }
 div.comment-block {
-  border-bottom: solid 1px #dddddd;
+  border-top: solid 1px #dddddd;
   padding-bottom: 7px;
+  padding-top: 3px;
 }

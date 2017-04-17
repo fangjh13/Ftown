@@ -1,18 +1,20 @@
 <ul class="comments">
-    {% if comments %}
-        {% for comment in comments %}
         <li class="comment">
+            {% if comments %}
+            {% for comment in comments %}
             <div class="comment-block">
                 <div class="list-comment-header">
                     <div class="comment-date">创建于 {{ moment(comment.ctime).fromNow() }}</div>
                     <div class="comment-author"><a href="">{{ comment.author.username }}</a></div>
                 </div>
 				<div class="comment-body">{{ comment.body_html | safe }}</div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="comment-block">
+                暂无评论
 			</div>
+            {% endif %}
         </li>
-        {% endfor %}
-    {% else %}
-        <li>暂时还没有评论</li>
-    {% endif %}
 </ul>
 
