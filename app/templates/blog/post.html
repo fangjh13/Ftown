@@ -29,7 +29,7 @@
                     {{ post.body_html | safe }}
                     <div class="post-views">浏览量 {{ post.views }}</div>
                     <hr>
-                    <div class="comment-header">
+                    <div class="comment-header" id="comment">
                         {% if current_user.is_authenticated %}
                             <div class="current-user-header">{{ current_user.username }}</div>
                         {% endif %}

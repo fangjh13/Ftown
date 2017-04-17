@@ -11,7 +11,7 @@ from app import db
 from . import blog
 from .forms import WriteForm, CommentForm
 from ..email import send_mail
-from ..models import User, Post
+from ..models import User, Post, Comment
 from .qiniu_ftown import upload_picture
 
 
@@ -59,10 +59,16 @@ def user_post(username):
                            username=username)
 
 
-@blog.route('/post')
+@blog.route('/post', methods=['GET', 'POST'])
 def post():
     post = Post.query.order_by(Post.timestamp.desc()).first_or_404()
     form = CommentForm()
+    if form.validate_on_submit():
+        content = form.content.data
+        c = Comment(body=content, author=current_user, post=post)
+        db.session.add(c)
+        db.session.commit()
+        return redirect(url_for('blog.post')+'#comment')
     comments = post.comments.all()
     count = post.comments.count()
     post.views += 1
@@ -72,10 +78,16 @@ def post():
                            comments=comments, count=count)
 
 
-@blog.route('/post/<int:post_id>')
+@blog.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def onepost(post_id):
     post = Post.query.get_or_404(post_id)
     form = CommentForm()
+    if form.validate_on_submit():
+        content = form.content.data
+        c = Comment(body=content, author=current_user, post=post)
+        db.session.add(c)
+        db.session.commit()
+        return redirect(url_for('.onepost', post_id=post.id)+'#comment')
     comments = post.comments.all()
     count = post.comments.count()
     post.views += 1

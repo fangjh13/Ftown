@@ -196,3 +196,15 @@ class FlaskClientCase(unittest.TestCase):
     def test_single_post(self):
         response = self.client.get(url_for('blog.onepost', post_id=1))
         self.assertTrue(b'comment body' in response.data)
+
+    def test_post_comment(self):
+        response = self.client.get(url_for('blog.post'))
+        self.assertTrue('您还没有登录'.encode('utf-8') in
+                        response.data)
+        response = self.client.post(url_for('auth.login'), data=dict(
+            email='test@example.com', password='123456'), follow_redirects=True)
+        self.assertFalse('您还没有登录'.encode('utf-8') in
+                        response.data)
+        response = self.client.post(url_for('blog.post'), data=dict(
+            content='test comment content'), follow_redirects=True)
+        self.assertTrue(b'test comment content' in response.data)
