@@ -422,7 +422,6 @@ div.comment-login-area {
 }
 div.comment-content-area {
   padding-bottom: 15px;
-  border-bottom: 2px solid #e7e9ee;
 }
 ul.comments {
   list-style-type: none;
@@ -437,7 +436,14 @@ div.comment-author {
   font-size: 18px;
 }
 div.comment-block {
-  border-top: solid 1px #dddddd;
   padding-bottom: 7px;
   padding-top: 3px;
+  margin-left: 55px;
+}
+div.comment-thumbnail {
+  position: absolute;
+  margin-top: 9px;
+}
+li.comment {
+  border-top: 1px solid #dddddd;
 }

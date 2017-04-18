@@ -1,19 +1,25 @@
 <ul class="comments">
-        <li class="comment">
             {% if comments %}
             {% for comment in comments %}
-            <div class="comment-block">
-                <div class="list-comment-header">
-                    <div class="comment-date">创建于 {{ moment(comment.ctime).fromNow() }}</div>
-                    <div class="comment-author"><a href="">{{ comment.author.username }}</a></div>
+            <li class="comment">
+                <div class="comment-thumbnail">
+                        <img src="https://www.gravatar.com/avatar/70b005ddbc14795b4ca5b6403fd12531?s=45">
                 </div>
-				<div class="comment-body">{{ comment.body_html | safe }}</div>
-            </div>
+                <div class="comment-block">
+                    <div class="list-comment-header">
+                        <div class="comment-date">{{ moment(comment.ctime).fromNow() }}</div>
+                        <div class="comment-author"><a href="">{{ comment.author.username }}</a></div>
+                    </div>
+                    <div class="comment-body">{{ comment.body_html | safe }}</div>
+                </div>
+            </li>
             {% endfor %}
             {% else %}
-            <div class="comment-block">
+            <li class="comment">
+                <div class="comment-block">
                 暂无评论
-			</div>
+                </div>
+            </li>
             {% endif %}
         </li>
 </ul>
