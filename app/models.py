@@ -4,11 +4,11 @@ from datetime import datetime
 from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from flask import current_app
-from sqlalchemy import event
+from flask import current_app, request
 from markdown import markdown
 import bleach
 from itsdangerous import TimedJSONWebSignatureSerializer
+from hashlib import md5
 
 
 class User(db.Model, UserMixin):
@@ -22,6 +22,7 @@ class User(db.Model, UserMixin):
     confirmed = db.Column(db.BOOLEAN, default=False)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    avatar_hash = db.Column(db.String(32))
 
     def __repr__(self):
         return 'User %r' % self.username
@@ -76,8 +77,10 @@ class User(db.Model, UserMixin):
             data = s.loads(token)
         except:
             return False
+        new_mail = data.get('email_address')
         if data.get('change_email') == self.id:
-            self.email = data.get('email_address')
+            self.email = new_mail
+            self.avatar_hash = md5(new_mail.encode('utf-8')).hexdigest()
             db.session.add(self)
             db.session.commit()
             return True
@@ -109,6 +112,22 @@ class User(db.Model, UserMixin):
             db.session.commit()
             return True
         return False
+
+    def gravatar(self, size=45, default='retro', rating='x'):
+        if request.is_secure:
+            header = 'https://www.gravatar.com/avatar'
+        else:
+            header = 'http://www.gravatar.com/avatar'
+        hash = self.avatar_hash or md5(self.email.encode('utf-8')).hexdigest()
+        return '{}/{}?s={}&d={}&r={}'.format(
+            header, hash, size, default, rating
+        )
+
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        # initialize avatar md5 hash
+        if self.email and self.avatar_hash is None:
+            self.avatar_hash = md5(self.email.encode('utf-8')).hexdigest()
 
 
 # flask-login user_loader callback

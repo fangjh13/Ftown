@@ -118,3 +118,11 @@ class ModelTestCase(unittest.TestCase):
         u = User.query.first()
         self.assertFalse(u.verify_password('123456'))
         self.assertTrue(u.verify_password('123'))
+
+    def test_gravatar(self):
+        u = User(email='test@example.com', password='123456')
+        db.session.add(u)
+        db.session.commit()
+        u = User.query.first()
+        self.assertTrue(u.avatar_hash)
+        self.assertTrue(u.gravatar())

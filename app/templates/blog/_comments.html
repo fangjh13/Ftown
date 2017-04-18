@@ -3,7 +3,7 @@
             {% for comment in comments %}
             <li class="comment">
                 <div class="comment-thumbnail">
-                        <img src="https://www.gravatar.com/avatar/70b005ddbc14795b4ca5b6403fd12531?s=45">
+                        <img src="{{ comment.author.gravatar() }}">
                 </div>
                 <div class="comment-block">
                     <div class="list-comment-header">

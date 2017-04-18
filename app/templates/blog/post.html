@@ -45,7 +45,7 @@
                     </div>
                     {% else %}
                     <div class="comment-login-area">
-                        您还没有登录，请<a href="{{ url_for('auth.login') }}"><strong>登录</strong></a>后评论。
+                        您还没有登录，请<a href="{{ url_for('auth.login') }}?next={{ url_for('blog.onepost', post_id=post.id) }}#comment"><strong>登录</strong></a>后评论。
                     </div>
                     {% endif %}
                     <div class="comment-content">
