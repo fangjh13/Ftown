@@ -447,3 +447,7 @@ div.comment-thumbnail {
 li.comment {
   border-top: 1px solid #dddddd;
 }
+div.comment-block-none {
+  padding-bottom: 7px;
+  padding-top: 5px;
+}
