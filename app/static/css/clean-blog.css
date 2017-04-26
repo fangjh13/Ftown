@@ -404,8 +404,11 @@ body {
 .label {
   font-size: 60%;
 }
-.post-views {
+div.content-footer {
   text-align: right;
+}
+div.post-views {
+  margin-top: 6px;
   font-size: 16px;
   color: #aea79f;
 }

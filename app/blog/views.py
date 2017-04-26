@@ -210,4 +210,4 @@ def like(id):
     p.likes += 1
     db.session.add(p)
     db.session.commit()
-    return redirect(url_for('blog.home'))
+    return redirect(url_for('blog.onepost', post_id=p.id))

@@ -27,7 +27,10 @@
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     {{ post.body_html | safe }}
-                    <div class="post-views">浏览量 {{ post.views }}</div>
+                    <div class="content-footer">
+                        <a href="{{ url_for('blog.like', id=post.id) }}"><span class="label label-danger">{{ post.likes }} Likes</span></a>
+                        <div class="post-views">浏览量 {{ post.views }}</div>
+                    </div>
                     <hr>
                     <div class="comment-header" id="comment">
                         {% if current_user.is_authenticated %}
