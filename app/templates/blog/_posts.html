@@ -8,8 +8,8 @@
         </a>
         <p class="post-meta" style="margin-bottom: 0px;">Posted by <a href="{{ url_for('blog.about') }}">{{ post.author.username }}</a> on {{ moment(post.timestamp).format('LL') }}</p>
         <div class="post-footer">
-            <a href="{{ url_for('blog.like', id=post.id) }}#post"><span class="label label-success">{{ post.likes }} Likes</span></a>
-            <a href="#"><span class="label label-default">0 Comments</span></a>
+            <a href="{{ url_for('blog.like', id=post.id, page=request.args.get('page')) }}#post"><span class="label label-success">{{ post.likes }} Likes</span></a>
+            <a href="{{ url_for('blog.onepost', post_id=post.id) }}#comment"><span class="label label-default">{{ post.comments.count() }} Comments</span></a>
             <a href="{{ url_for('blog.onepost', post_id=post.id) }}"><span class="label label-default">Permalink</span></a>
         </div>
     </div>
