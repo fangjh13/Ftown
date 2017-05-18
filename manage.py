@@ -23,7 +23,7 @@ app = create_app(os.getenv('FTOWN_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
-manager.add_command('runserver', Server(host='0.0.0.0', port=5000))
+manager.add_command('runserver', Server(host='127.0.0.1', port=5000))
 
 def _make_context():
     return dict(app=app, db=db, User=User, Post=Post, Comment=Comment)
