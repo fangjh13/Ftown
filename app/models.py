@@ -136,6 +136,20 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
+# helper table that is used for the relationship
+tags_rel = db.Table('tags_rel',
+                    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
+                    db.Column('post_id', db.Integer, db.ForeignKey('posts.id')))
+
+class Tag(db.Model):
+    __tablename__ = 'tags'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(10), index=True)
+
+    def __repr__(self):
+        return 'Tags %r' % self.name
+
+
 class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
@@ -206,11 +220,3 @@ class Comment(db.Model):
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 
 
-# helper table that is used for the relationship
-tags_rel = db.Table('tags_rel',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
-    db.Column('post_id', db.Integer, db.ForeignKey('posts.id')))
-
-class Tag(db.Model):
-    __tablename__ = 'tags'
-    id = db.Column(db.Integer, primary_key=True)
