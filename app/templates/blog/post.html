@@ -28,7 +28,9 @@
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     {{ post.body_html | safe }}
                     <div class="content-footer">
-                        <span class="label label-success"><i class="fa fa-tag"></i> Python</span>
+                        {% for tag in post.tags %}
+                            <span class="label label-success"><i class="fa fa-tag"></i> {{ tag.name }}</span>
+                        {% endfor %}
                         <a href="{{ url_for('blog.like', id=post.id) }}"><span class="label label-danger">{{ post.likes }} Likes</span></a>
                         <div class="post-views">浏览量 {{ post.views }}</div>
                     </div>
