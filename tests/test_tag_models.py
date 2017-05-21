@@ -41,4 +41,10 @@ class TagCase(unittest.TestCase):
         t1 = Tag.query.filter_by(name='Python').first()
         self.assertTrue(t1)
         self.assertTrue(t1.posts.count() == 1)
+        p2 = Post(title='p2')
+        p2.tags.append(t)
+        db.session.add(p2)
+        db.session.commit()
+        t2 = Tag.query.filter_by(name='Python').first()
+        self.assertTrue(t2.posts.count() == 2)
 
