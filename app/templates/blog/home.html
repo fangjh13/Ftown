@@ -25,9 +25,15 @@
                 <!-- Pager -->
                 {% include '/blog/_posts.html' %}
                 <!--Pagination-->
+                {% if not username %}
+                    {% set username=None %}
+                {% endif %}
+                {% if not tag_name %}
+                    {% set tag_name = None %}
+                {% endif %}
                 {% if pagination %}
                     {% import '/blog/_macros.html' as macros %}
-                    {{ macros.pagination_widget(pagination, endpoint, username=username) }}
+                    {{ macros.pagination_widget(pagination, endpoint, username=username, tag_name=tag_name) }}
                 {% endif %}
             </div>
         </div>

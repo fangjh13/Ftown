@@ -11,7 +11,7 @@ from app import db
 from . import blog
 from .forms import WriteForm, CommentForm
 from ..email import send_mail
-from ..models import User, Post, Comment
+from ..models import User, Post, Comment, Tag
 from .qiniu_ftown import upload_picture
 
 
@@ -211,3 +211,17 @@ def like(id):
     db.session.add(p)
     db.session.commit()
     return redirect(url_for('blog.onepost', post_id=p.id))
+
+
+@blog.route('/tags/<tag_name>')
+def tag_sort(tag_name):
+    tag = Tag.query.filter_by(name=tag_name).first()
+    page = request.args.get('page', 1, type=int)
+    pagination = tag.posts.order_by(Post.timestamp.desc()).paginate(
+        page, 4, error_out=False)
+    posts = pagination.items
+    return render_template('/blog/home.html', posts=posts,
+                           pagination=pagination,
+                           tag_name=tag_name,
+                           endpoint='blog.tag_sort')
+
