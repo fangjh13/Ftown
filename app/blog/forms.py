@@ -13,7 +13,8 @@ class WriteForm(FlaskForm):
     ])
     title = StringField('Title', validators=[DataRequired(), Length(1, 100)])
     subtitle = StringField('Subtitle', validators=[Length(0, 120)])
-    body = PageDownField('Body Content: PS. support markdown')
+    tags = StringField('Tags (split with ";" every tag limited char 10)')
+    body = PageDownField('Body Content: (PS. support markdown)')
     submit = SubmitField('Submit')
 
 

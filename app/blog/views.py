@@ -3,7 +3,8 @@
 import os
 from datetime import datetime
 
-from flask import render_template, request, flash, redirect, url_for, abort
+from flask import render_template, request, flash, redirect, url_for, abort,\
+    session
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 
@@ -148,11 +149,24 @@ def write():
 
         title = form.title.data
         subtitle = form.subtitle.data
+        tag_string = form.tags.data
         body = form.body.data
 
         u = User.query.filter_by(username=current_user.username).first_or_404()
         p = Post(picture=filename, title=title, subtitle=subtitle,
                  body=body, author=u)
+        # add post tags
+        tags = set(map(lambda x: x.strip(), tag_string.split(';')))
+        # remove '' tag
+        try:
+            tags.remove('')
+        except KeyError:
+            pass
+        for i in tags:
+            t = Tag.query.filter_by(name=i).first()
+            if not t:
+                t = Tag(name=i)
+            p.tags.append(t)
         db.session.add(p)
         db.session.commit()
         return redirect(url_for('blog.post'))
@@ -182,12 +196,35 @@ def edit(id):
         p.title = form.title.data
         p.subtitle = form.subtitle.data
         p.body = form.body.data
+        tag_string = form.tags.data
+        tags = set(map(lambda x: x.strip(), tag_string.split(';')))
+        try:
+            tags.remove('')
+        except KeyError:
+            pass
+        # get old tags via session
+        old_tags = session.get('old_tags')
+        # remove all old tags
+        if old_tags:
+            for i in old_tags:
+                t = Tag.query.filter_by(name=i).first()
+                p.tags.remove(t)
+        # add new tags
+        for i in tags:
+            t = Tag.query.filter_by(name=i).first()
+            if not t:
+                t = Tag(name=i)
+            p.tags.append(t)
         db.session.add(p)
         db.session.commit()
         return redirect(url_for('blog.onepost', post_id=id))
     form.picture.data = p.picture
     form.title.data = p.title
     form.subtitle.data = p.subtitle
+    # set previous tag via flask session
+    tags = list(map(lambda x: x.name, p.tags.all()))
+    session['old_tags'] = tags
+    form.tags.data = ';'.join(tags)
     form.body.data = p.body
     return render_template('/blog/write.html', form=form)
 
