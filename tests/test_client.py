@@ -5,6 +5,7 @@ import unittest
 from app import create_app, db
 from app.models import User, Post, Comment, Tag
 from flask import url_for
+import time
 
 
 class FlaskClientCase(unittest.TestCase):
@@ -19,7 +20,9 @@ class FlaskClientCase(unittest.TestCase):
                  password='123456', confirmed=True)
         db.session.add(u)
         db.session.commit()
+        # init tag
         t = Tag(name='TEST')
+        t2 = Tag(name='INIT_TAG')
         p = Post(title='test_post', body='post body', author=u)
         p.tags.append(t)
         db.session.add(p)
@@ -240,3 +243,27 @@ class FlaskClientCase(unittest.TestCase):
     def test_sort_tags(self):
         response = self.client.get(url_for('blog.tag_sort', tag_name='TEST'))
         self.assertTrue(b'test_post' in response.data)
+
+
+    def test_compose_post_with_tag(self):
+        # login
+        response = self.client.post(url_for('auth.login'), data=dict(
+            email='test@example.com', password='123456'), follow_redirects=True)
+        # post
+        time.sleep(1)
+        response = self.client.post(url_for('blog.write'), data=dict(
+            title='test tag title', tags='test_tag;TWO', body='body'),
+                                    follow_redirects=True)
+        self.assertTrue('test_tag'.encode('utf-8') in response.data)
+
+
+    def test_edit_post_with_tag(self):
+        # login
+        response = self.client.post(url_for('auth.login'), data=dict(
+            email='test@example.com', password='123456'), follow_redirects=True)
+        # edit post id=1
+        response = self.client.post(url_for('blog.edit', id=1), data=dict(
+            title='title', tags='new_tag', body='body'),
+                                    follow_redirects=True)
+        self.assertTrue(b'new_tag' in response.data)
+        self.assertFalse(b'INIT_TAG' in response.data)
