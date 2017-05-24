@@ -3,8 +3,9 @@
 
 import unittest
 from app import create_app, db
-from app.models import User, Post, Comment
+from app.models import User, Post, Comment, Tag
 from flask import url_for
+import time
 
 
 class FlaskClientCase(unittest.TestCase):
@@ -19,30 +20,39 @@ class FlaskClientCase(unittest.TestCase):
                  password='123456', confirmed=True)
         db.session.add(u)
         db.session.commit()
+        # init tag
+        t = Tag(name='TEST')
+        t2 = Tag(name='INIT_TAG')
         p = Post(title='test_post', body='post body', author=u)
+        p.tags.append(t)
         db.session.add(p)
         db.session.commit()
         c = Comment(body='comment body', author=u, post=p)
         db.session.add(c)
         db.session.commit()
 
+
     def tearDown(self):
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
+
 
     def test_main_index(self):
         response = self.client.get(url_for('main.index'),
                                    follow_redirects=True)
         self.assertTrue(b'Fython' in response.data)
 
+
     def test_blog_index(self):
         response = self.client.get(url_for('blog.home'))
         self.assertTrue(b'Hello Blog' in response.data)
 
+
     def test_blog_about(self):
         response = self.client.get(url_for('blog.about'))
         self.assertTrue(b'About Me' in response.data)
+
 
     def test_user_login_logout(self):
         # login
@@ -60,12 +70,14 @@ class FlaskClientCase(unittest.TestCase):
         self.assertTrue(response.status_code==200)
         self.assertTrue('忘记密码?'.encode('utf-8') in response.data)
 
+
     def test_user_login_with_invalid(self):
         # login with invaild password
         response = self.client.post(url_for('auth.login'), data=dict(
             email='test@example.com', password='123'), follow_redirects=True)
         # test flash message
         self.assertTrue('用户名或密码错误，请重试'.encode('utf-8') in response.data)
+
 
     def test_contact_send_email(self):
         ## can receive a letter must set `MAIL_SUPPRESS_SEND = False`
@@ -82,6 +94,7 @@ class FlaskClientCase(unittest.TestCase):
         #     self.assertTrue(len(outbox) == 1)
         #     self.assertTrue(outbox[0].subject == 'unittest')
 
+
     def test_post_views(self):
         p = Post.query.first()
         self.assertTrue(p.views==0)
@@ -93,6 +106,7 @@ class FlaskClientCase(unittest.TestCase):
         p = Post.query.first()
         self.assertTrue(p.views==2)
 
+
     def test_index_like(self):
         p = Post.query.first()
         self.assertTrue(p.likes==0)
@@ -102,9 +116,11 @@ class FlaskClientCase(unittest.TestCase):
         p1 = Post.query.first()
         self.assertTrue(p1.likes==1)
 
+
     def test_user_register_index(self):
         response = self.client.get(url_for('auth.register'))
         self.assertTrue('注册'.encode('utf-8') in response.data)
+
 
     def test_user_register_invalid_password(self):
         response = self.client.post(url_for('auth.register'),
@@ -114,6 +130,7 @@ class FlaskClientCase(unittest.TestCase):
                                   password2='12345'),
                         follow_redirects=True)
         self.assertTrue('两次密码输入不一致'.encode('utf-8') in response.data)
+
 
     def test_user_register_unconfirmed(self):
         response = self.client.post(url_for('auth.register'),
@@ -129,6 +146,7 @@ class FlaskClientCase(unittest.TestCase):
                                               password='12345'),
                                     follow_redirects=True)
         self.assertTrue('你的邮箱账户未激活'.encode('utf-8') in response.data)
+
 
     def test_change_email(self):
         # login user
@@ -147,6 +165,7 @@ class FlaskClientCase(unittest.TestCase):
                                     follow_redirects=True)
         self.assertTrue('更换邮箱的邮件已重新发送到您新的邮箱'.encode('utf-8')
                         in response.data)
+
 
     def test_reset_password_request(self):
         response = self.client.get(url_for('auth.reset_password_request'))
@@ -176,6 +195,7 @@ class FlaskClientCase(unittest.TestCase):
                                     follow_redirects=True)
         self.assertTrue('链接非法或已过期'.encode('utf-8') in response.data)
 
+
     def test_change_password(self):
         response = self.client.get(url_for('auth.change_password'),
                                    follow_redirects=True)
@@ -189,13 +209,16 @@ class FlaskClientCase(unittest.TestCase):
                                     follow_redirects=True)
         self.assertTrue('旧密码输入不正确'.encode('utf-8') in response.data)
 
+
     def test_single_user_posts(self):
         response = self.client.get(url_for('blog.user_post', username='test'))
         self.assertTrue(b'test_post' in response.data)
 
+
     def test_single_post(self):
         response = self.client.get(url_for('blog.onepost', post_id=1))
         self.assertTrue(b'comment body' in response.data)
+
 
     def test_post_comment(self):
         response = self.client.get(url_for('blog.post'))
@@ -208,3 +231,39 @@ class FlaskClientCase(unittest.TestCase):
         response = self.client.post(url_for('blog.post'), data=dict(
             content='test comment content'), follow_redirects=True)
         self.assertTrue(b'test comment content' in response.data)
+
+
+    def test_tags(self):
+        response = self.client.get(url_for('blog.home'))
+        self.assertTrue(b'TEST' in response.data)
+        response = self.client.get(url_for('blog.onepost', post_id=1))
+        self.assertTrue(b'TEST' in response.data)
+
+
+    def test_sort_tags(self):
+        response = self.client.get(url_for('blog.tag_sort', tag_name='TEST'))
+        self.assertTrue(b'test_post' in response.data)
+
+
+    def test_compose_post_with_tag(self):
+        # login
+        response = self.client.post(url_for('auth.login'), data=dict(
+            email='test@example.com', password='123456'), follow_redirects=True)
+        # post
+        time.sleep(1)
+        response = self.client.post(url_for('blog.write'), data=dict(
+            title='test tag title', tags='test_tag;TWO', body='body'),
+                                    follow_redirects=True)
+        self.assertTrue('test_tag'.encode('utf-8') in response.data)
+
+
+    def test_edit_post_with_tag(self):
+        # login
+        response = self.client.post(url_for('auth.login'), data=dict(
+            email='test@example.com', password='123456'), follow_redirects=True)
+        # edit post id=1
+        response = self.client.post(url_for('blog.edit', id=1), data=dict(
+            title='title', tags='new_tag', body='body'),
+                                    follow_redirects=True)
+        self.assertTrue(b'new_tag' in response.data)
+        self.assertFalse(b'INIT_TAG' in response.data)

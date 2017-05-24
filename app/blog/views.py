@@ -3,7 +3,8 @@
 import os
 from datetime import datetime
 
-from flask import render_template, request, flash, redirect, url_for, abort
+from flask import render_template, request, flash, redirect, url_for, abort,\
+    session
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 
@@ -11,7 +12,7 @@ from app import db
 from . import blog
 from .forms import WriteForm, CommentForm
 from ..email import send_mail
-from ..models import User, Post, Comment
+from ..models import User, Post, Comment, Tag
 from .qiniu_ftown import upload_picture
 
 
@@ -148,11 +149,24 @@ def write():
 
         title = form.title.data
         subtitle = form.subtitle.data
+        tag_string = form.tags.data
         body = form.body.data
 
         u = User.query.filter_by(username=current_user.username).first_or_404()
         p = Post(picture=filename, title=title, subtitle=subtitle,
                  body=body, author=u)
+        # add post tags
+        tags = set(map(lambda x: x.strip(), tag_string.split(';')))
+        # remove '' tag
+        try:
+            tags.remove('')
+        except KeyError:
+            pass
+        for i in tags:
+            t = Tag.query.filter_by(name=i).first()
+            if not t:
+                t = Tag(name=i)
+            p.tags.append(t)
         db.session.add(p)
         db.session.commit()
         return redirect(url_for('blog.post'))
@@ -182,12 +196,35 @@ def edit(id):
         p.title = form.title.data
         p.subtitle = form.subtitle.data
         p.body = form.body.data
+        tag_string = form.tags.data
+        tags = set(map(lambda x: x.strip(), tag_string.split(';')))
+        try:
+            tags.remove('')
+        except KeyError:
+            pass
+        # get old tags via session
+        old_tags = session.get('old_tags')
+        # remove all old tags
+        if old_tags:
+            for i in old_tags:
+                t = Tag.query.filter_by(name=i).first()
+                p.tags.remove(t)
+        # add new tags
+        for i in tags:
+            t = Tag.query.filter_by(name=i).first()
+            if not t:
+                t = Tag(name=i)
+            p.tags.append(t)
         db.session.add(p)
         db.session.commit()
         return redirect(url_for('blog.onepost', post_id=id))
     form.picture.data = p.picture
     form.title.data = p.title
     form.subtitle.data = p.subtitle
+    # set previous tag via flask session
+    tags = list(map(lambda x: x.name, p.tags.all()))
+    session['old_tags'] = tags
+    form.tags.data = ';'.join(tags)
     form.body.data = p.body
     return render_template('/blog/write.html', form=form)
 
@@ -210,4 +247,18 @@ def like(id):
     p.likes += 1
     db.session.add(p)
     db.session.commit()
-    return redirect(url_for('blog.home')+'?page={}'.format(request.args.get('page')))
+    return redirect(url_for('blog.onepost', post_id=p.id))
+
+
+@blog.route('/tags/<tag_name>')
+def tag_sort(tag_name):
+    tag = Tag.query.filter_by(name=tag_name).first()
+    page = request.args.get('page', 1, type=int)
+    pagination = tag.posts.order_by(Post.timestamp.desc()).paginate(
+        page, 4, error_out=False)
+    posts = pagination.items
+    return render_template('/blog/home.html', posts=posts,
+                           pagination=pagination,
+                           tag_name=tag_name,
+                           endpoint='blog.tag_sort')
+
