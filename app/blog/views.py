@@ -88,6 +88,13 @@ def onepost(post_id):
         c = Comment(body=content, author=current_user, post=post)
         db.session.add(c)
         db.session.commit()
+        subject = '[SOMEONE COMMENT] someone comment your posts.'
+        addr = url_for('.onepost', post_id=post_id, _external=True)
+        send_mail(subject,
+                  "Blog Admin <{0}>".format(os.environ.get('MAIL_USERNAME')),
+                  recipients=['616960344@qq.com'],
+                  prefix_template='/mail/comment_remind',
+                  addr=addr)
         return redirect(url_for('.onepost', post_id=post.id)+'#comment')
     comments = post.comments.all()
     count = post.comments.count()
