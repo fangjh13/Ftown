@@ -96,7 +96,6 @@ __pycache__
 
 # Virtualenv
 ftownvenv/
-FtonwVenv/
 
 # supervisord config
 supervisord.conf
