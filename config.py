@@ -78,7 +78,7 @@ class ProductionConfig(Config):
         # TimeRotatingFileHandler
         from logging.handlers import TimedRotatingFileHandler
         time_rotating_handler = TimedRotatingFileHandler(
-            filename='time_rotating_warning.log',
+            filename='log/time_rotating_warning.log',
             when='D',
             backupCount=7,
             encoding='utf-8',
