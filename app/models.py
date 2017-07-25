@@ -180,7 +180,7 @@ class Post(db.Model):
         attrs = {
             '*': ['class'],
             'a': ['href', 'rel', 'title'],
-            'img': ['alt', 'src']
+            'img': ['alt', 'src', 'height', 'width', 'align']
         }
         target.body_html = bleach.clean(markdown(value, output_format='html'),
                         tags=allowed_tags, attributes=attrs, strip=True)
