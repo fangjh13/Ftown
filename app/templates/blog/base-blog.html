@@ -32,7 +32,7 @@
       <div class="navbar-header page-scroll">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
           <span class="sr-only">Toggle navigation</span>
-          Menu <i class="fa fa-bars"></i>
+          菜单 <i class="fa fa-bars"></i>
         </button>
         <a class="navbar-brand" href={{ url_for("blog.home") }}>Fython Fang</a>
       </div>
@@ -41,22 +41,22 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav navbar-right">
           <li>
-            <a href={{ url_for("blog.home") }}>Home</a>
+            <a href={{ url_for("blog.home") }}>主页</a>
           </li>
           <li>
-            <a href={{ url_for("blog.about") }}>About</a>
+            <a href={{ url_for("blog.about") }}>关于</a>
           </li>
           <li>
-            <a href={{ url_for("blog.post") }}>Latest Post</a>
+            <a href={{ url_for("blog.post") }}>最新发表</a>
           </li>
           <li>
-            <a href={{ url_for("blog.contact") }}>Contact</a>
+            <a href={{ url_for("blog.contact") }}>联系我</a>
           </li>
           <li>
             {% if current_user.is_authenticated %}
-            <a href="{{ url_for("blog.dashboard") }}">Dashboard</a>
+            <a href="{{ url_for("blog.dashboard") }}">管理后台</a>
             {% else %}
-            <a href={{ url_for("auth.login") }}>Login</a>
+            <a href={{ url_for("auth.login") }}>登录</a>
             {% endif %}
           </li>
         </ul>
