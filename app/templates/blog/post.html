@@ -87,6 +87,18 @@
                     <div class="comment-content">
                     {% include 'blog/_comments.html' %}
                     </div>
+                    <div class="comment-open" id="comments-open">
+                        <h2>免登录入口</h2>
+                        <form class="comment-open" method="post">
+                            {{ open_form.hidden_tag() }}
+                            {{ wtf.form_errors(form, hiddens="only") }}
+
+                            {{ wtf.form_field(open_form.content) }}
+                            {{ wtf.form_field(open_form.username) }}
+                            {{ wtf.form_field(open_form.email) }}
+                            {{ wtf.form_field(open_form.submit) }}
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 
 from app import db
 from . import blog
-from .forms import WriteForm, CommentForm
+from .forms import WriteForm, CommentForm, CommentOpenForm
 from ..email import send_mail
 from ..models import User, Post, Comment, Tag
 from .qiniu_ftown import upload_picture
@@ -75,8 +75,9 @@ def post():
     post.views += 1
     db.session.add(post)
     db.session.commit()
+    open_form = CommentOpenForm()
     return render_template('/blog/post.html', post=post, form=form,
-                           comments=comments, count=count)
+                           comments=comments, count=count, open_form=open_form)
 
 
 @blog.route('/post/<int:post_id>', methods=['GET', 'POST'])
@@ -102,8 +103,9 @@ def onepost(post_id):
     post.views += 1
     db.session.add(post)
     db.session.commit()
+    open_form = CommentOpenForm()
     return render_template('/blog/post.html', post=post, form=form,
-                           comments=comments, count=count)
+                           comments=comments, count=count, open_form=open_form)
 
 
 @blog.route('/contact', methods=["GET", "POST"])
