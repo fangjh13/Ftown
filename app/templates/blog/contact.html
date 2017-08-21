@@ -27,16 +27,7 @@
                 <p>想要联系我？请填写以下表格给我发送消息，我会在24小时之内回复你！</p>
                 <form name="sentMessage" action = "{{ url_for("blog.contact") }}" method = "POST">
                     <div id="success">
-                        {% with messages = get_flashed_messages() %}
-                            {% if messages %}
-                                {% for message in messages %}
-                                    <div class="alert alert-warning">
-                                        {{ message }}
-                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                        {% endwith %}
+                        {% include 'blog/_alert.html' %}
                     </div>
                     <div class="row control-group">
                         <div class="form-group col-xs-12 floating-label-form-group controls">
