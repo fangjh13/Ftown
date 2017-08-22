@@ -8,7 +8,7 @@
                 <div class="comment-block">
                     <div class="list-comment-header">
                         <div class="comment-date">{{ moment(comment.ctime).fromNow() }}</div>
-                        <div class="comment-author"><a href="">{{ comment.author.username }}</a></div>
+                        <div class="comment-author"><a href="">{% if comment.author.username %}{{ comment.author.username }}{% else %}{{ comment.author.name }}{% endif %}</a></div>
                     </div>
                     <div class="comment-body">{{ comment.body_html | safe }}</div>
                 </div>
