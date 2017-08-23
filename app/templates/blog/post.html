@@ -97,10 +97,10 @@
                             {{ open_form.hidden_tag() }}
                             {{ wtf.form_errors(open_form, hiddens="only") }}
 
-                            {{ wtf.form_field(open_form.content) }}
-                            {{ wtf.form_field(open_form.username) }}
-                            {{ wtf.form_field(open_form.email) }}
-                            {{ wtf.form_field(open_form.submit) }}
+                            {{ wtf.form_field(open_form.open_content) }}
+                            {{ wtf.form_field(open_form.open_name) }}
+                            {{ wtf.form_field(open_form.open_email) }}
+                            {{ wtf.form_field(open_form.open_submit) }}
                         </form>
                     </div>
                 </div>

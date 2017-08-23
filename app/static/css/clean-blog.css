@@ -454,13 +454,13 @@ div.comment-block-none {
   padding-bottom: 7px;
   padding-top: 5px;
 }
-div.comment-open #flask-pagedown-content {
+div.comment-open #flask-pagedown-open_content {
   height: 180px;
 }
-div.comment-open #username {
+div.comment-open #open_name {
   width: 40%;
 }
-div.comment-open #email {
+div.comment-open #open_email {
   width: 40%;
 }
 div.comment-open h2 {

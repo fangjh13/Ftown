@@ -24,8 +24,8 @@ class CommentForm(FlaskForm):
 
 
 class CommentOpenForm(FlaskForm):
-    content = PageDownField('留言', validators=[DataRequired()])
-    username = StringField("姓名", validators=[DataRequired()])
-    email = StringField("邮箱", validators=[DataRequired(), Email()])
-    submit = SubmitField("提交")
+    open_content = PageDownField('留言', validators=[DataRequired()])
+    open_name = StringField("姓名", validators=[DataRequired()])
+    open_email = StringField("邮箱", validators=[DataRequired(), Email()])
+    open_submit = SubmitField("提交")
 

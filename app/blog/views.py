@@ -85,10 +85,11 @@ def open_comment():
     post = Post.query.order_by(Post.timestamp.desc()).first_or_404()
     open_form = CommentOpenForm()
     if open_form.validate_on_submit():
-        content = open_form.content.data
-        username = open_form.username.data
-        email = open_form.email.data
-        anonymous_user = User(name=username, incog_email=email, anonymous=True)
+        content = open_form.open_content.data
+        open_name = open_form.open_name.data
+        open_email = open_form.open_email.data
+        anonymous_user = User(name=open_name, incog_email=open_email,
+                              anonymous=True)
         c = Comment(body=content, author=anonymous_user, post=post)
         db.session.add_all([anonymous_user, c])
         db.session.commit()
