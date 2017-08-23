@@ -267,3 +267,12 @@ class FlaskClientCase(unittest.TestCase):
                                     follow_redirects=True)
         self.assertTrue(b'new_tag' in response.data)
         self.assertFalse(b'INIT_TAG' in response.data)
+
+
+    def test_post_anonymous_comment(self):
+        response = self.client.get(url_for('blog.post'))
+        self.assertTrue('免登录入口'.encode('utf-8') in response.data)
+        response = self.client.post(url_for('blog.post'), data=dict(
+            open_content='test', open_name='test_username',
+            open_email='test@example.com'), follow_redirects=True)
+        self.assertTrue(b'test_username' in response.data)

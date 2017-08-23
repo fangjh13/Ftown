@@ -2,7 +2,8 @@
 
 import unittest
 from app import db, create_app
-from app.models import Comment
+from app.models import Comment, User, Post
+
 
 class CommentCase(unittest.TestCase):
     def setUp(self):
@@ -11,7 +12,8 @@ class CommentCase(unittest.TestCase):
         self.context.push()
         db.create_all()
         c = Comment(body='body')
-        db.session.add(c)
+        p = Post(title='title', body='body')
+        db.session.add_all([c, p])
         db.session.commit()
 
     def tearDown(self):
@@ -32,3 +34,14 @@ class CommentCase(unittest.TestCase):
         db.session.commit()
         c = Comment.query.first()
         self.assertTrue(c.body_html == '<code>code</code>')
+
+    def test_anonymous_partition(self):
+        u = User(name='anonymous', incog_email='incognito@example.com',
+                 anonymous=True)
+        p = Post.query.first()
+        c = Comment(body='<code>code</code>', author=u, post=p)
+        db.session.add_all([u, c])
+        n = User.query.first()
+        self.assertTrue(n)
+        total = Comment.query.all()
+        self.assertTrue(len(total) == 2)
