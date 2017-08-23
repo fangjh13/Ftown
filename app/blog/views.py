@@ -80,6 +80,23 @@ def post():
                            comments=comments, count=count, open_form=open_form)
 
 
+@blog.route('/post/open-comment', methods=['POST'])
+def open_comment():
+    post = Post.query.order_by(Post.timestamp.desc()).first_or_404()
+    open_form = CommentOpenForm()
+    if open_form.validate_on_submit():
+        content = open_form.content.data
+        username = open_form.username.data
+        email = open_form.email.data
+        anonymous_user = User(name=username, incog_email=email, anonymous=True)
+        c = Comment(body=content, author=anonymous_user, post=post)
+        db.session.add_all([anonymous_user, c])
+        db.session.commit()
+        return redirect(url_for('blog.onepost', post_id=post.id)+'#comment')
+    flash('邮箱填写错误，请重新填写！')
+    return redirect(url_for('blog.onepost', post_id=post.id) + '#comments-open')
+
+
 @blog.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def onepost(post_id):
     post = Post.query.get_or_404(post_id)

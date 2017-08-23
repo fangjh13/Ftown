@@ -15,6 +15,8 @@ class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, index=True)
+    name = db.Column(db.String(80))
+    incog_email = db.Column(db.String(120))
     password_hash = db.Column(db.String(128))
     email = db.Column(db.String(120), unique=True)
     register_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -23,6 +25,7 @@ class User(db.Model, UserMixin):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
     avatar_hash = db.Column(db.String(32))
+    anonymous = db.Column(db.String(2))
 
     def __repr__(self):
         return 'User %r' % self.username
@@ -118,7 +121,12 @@ class User(db.Model, UserMixin):
             header = 'https://www.gravatar.com/avatar'
         else:
             header = 'http://www.gravatar.com/avatar'
-        hash = self.avatar_hash or md5(self.email.encode('utf-8')).hexdigest()
+        if self.avatar_hash:
+            hash = self.avatar_hash
+        elif self.email:
+            hash = md5(self.email.encode('utf-8')).hexdigest()
+        elif self.incog_email:
+            hash = md5(self.incog_email.encode('utf-8')).hexdigest()
         return '{}/{}?s={}&d={}&r={}'.format(
             header, hash, size, default, rating
         )
@@ -128,6 +136,12 @@ class User(db.Model, UserMixin):
         # initialize avatar md5 hash
         if self.email and self.avatar_hash is None:
             self.avatar_hash = md5(self.email.encode('utf-8')).hexdigest()
+            db.session.add(self)
+            db.session.commit()
+        elif self.incog_email and self.avatar_hash is None:
+            self.avatar_hash = md5(self.incog_email.encode('utf-8')).hexdigest()
+            db.session.add(self)
+            db.session.commit()
 
 
 # flask-login user_loader callback
