@@ -88,7 +88,7 @@
                     {% include 'blog/_comments.html' %}
                     </div>
                     <div class="comment-open" id="comments-open">
-                        <form class="comment-open" method="post" action="/blog/post/open-comment">
+                        <form class="comment-open" method="post" action="/blog/post/open-comment/{{ post.id }}">
                             <div id="open-comment-error">
                                 {% include 'blog/_alert.html' %}
                             </div>

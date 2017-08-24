@@ -80,9 +80,9 @@ def post():
                            comments=comments, count=count, open_form=open_form)
 
 
-@blog.route('/post/open-comment', methods=['POST'])
-def open_comment():
-    post = Post.query.order_by(Post.timestamp.desc()).first_or_404()
+@blog.route('/post/open-comment/<int:post_id>', methods=['POST'])
+def open_comment(post_id):
+    post = Post.query.get_or_404(post_id)
     open_form = CommentOpenForm()
     if open_form.validate_on_submit():
         content = open_form.open_content.data
