@@ -23,4 +23,7 @@ def deploy():
         with prefix('source ftownvenv/bin/activate'):
             run('git fetch --all')
             run('git reset --hard origin/master')
-            run('supervisorctl restart ftown')
+            run('supervisorctl -c ./supervisord.conf stop ftown')
+            run('./manage.py db migrate')
+            run('./manage.py db upgrade')
+            run('supervisorctl -c ./supervisord.conf start ftown')

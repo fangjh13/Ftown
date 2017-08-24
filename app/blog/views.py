@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 
 from app import db
 from . import blog
-from .forms import WriteForm, CommentForm
+from .forms import WriteForm, CommentForm, CommentOpenForm
 from ..email import send_mail
 from ..models import User, Post, Comment, Tag
 from .qiniu_ftown import upload_picture
@@ -75,8 +75,27 @@ def post():
     post.views += 1
     db.session.add(post)
     db.session.commit()
+    open_form = CommentOpenForm()
     return render_template('/blog/post.html', post=post, form=form,
-                           comments=comments, count=count)
+                           comments=comments, count=count, open_form=open_form)
+
+
+@blog.route('/post/open-comment/<int:post_id>', methods=['POST'])
+def open_comment(post_id):
+    post = Post.query.get_or_404(post_id)
+    open_form = CommentOpenForm()
+    if open_form.validate_on_submit():
+        content = open_form.open_content.data
+        open_name = open_form.open_name.data
+        open_email = open_form.open_email.data
+        anonymous_user = User(name=open_name, incog_email=open_email,
+                              anonymous=True)
+        c = Comment(body=content, author=anonymous_user, post=post)
+        db.session.add_all([anonymous_user, c])
+        db.session.commit()
+        return redirect(url_for('blog.onepost', post_id=post.id)+'#comment')
+    flash('邮箱填写错误，请重新填写！')
+    return redirect(url_for('blog.onepost', post_id=post.id) + '#comments-open')
 
 
 @blog.route('/post/<int:post_id>', methods=['GET', 'POST'])
@@ -102,8 +121,9 @@ def onepost(post_id):
     post.views += 1
     db.session.add(post)
     db.session.commit()
+    open_form = CommentOpenForm()
     return render_template('/blog/post.html', post=post, form=form,
-                           comments=comments, count=count)
+                           comments=comments, count=count, open_form=open_form)
 
 
 @blog.route('/contact', methods=["GET", "POST"])

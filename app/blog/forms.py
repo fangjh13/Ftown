@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
 from wtforms import StringField, SubmitField, FileField
 from flask_pagedown.fields import PageDownField
-from wtforms.validators import Length, DataRequired
+from wtforms.validators import Length, DataRequired, Email
 
 # Post a new blog article form
 class WriteForm(FlaskForm):
@@ -21,4 +21,11 @@ class WriteForm(FlaskForm):
 class CommentForm(FlaskForm):
     content = PageDownField('', validators=[DataRequired()])
     submit = SubmitField('提交')
+
+
+class CommentOpenForm(FlaskForm):
+    open_content = PageDownField('留言', validators=[DataRequired()])
+    open_name = StringField("姓名", validators=[DataRequired()])
+    open_email = StringField("邮箱", validators=[DataRequired(), Email()])
+    open_submit = SubmitField("提交")
 

@@ -454,3 +454,19 @@ div.comment-block-none {
   padding-bottom: 7px;
   padding-top: 5px;
 }
+div.comment-open #flask-pagedown-open_content {
+  height: 180px;
+}
+div.comment-open #open_name {
+  width: 40%;
+}
+div.comment-open #open_email {
+  width: 40%;
+}
+div.comment-open h2 {
+  padding-top: 2em;
+  border-bottom: 1px dashed #d3d3d3;
+  color: #3c3c3c;
+  padding-bottom: 2px;
+
+}
