@@ -168,6 +168,7 @@ class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(240), index=True)
+    brief_title = db.Column(db.String(240), index=True)
     subtitle = db.Column(db.String(240), index=True)
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
