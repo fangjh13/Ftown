@@ -177,12 +177,13 @@ def write():
 
         title = form.title.data
         subtitle = form.subtitle.data
+        brief_title = form.brief_title.data
         tag_string = form.tags.data
         body = form.body.data
 
         u = User.query.filter_by(username=current_user.username).first_or_404()
         p = Post(picture=filename, title=title, subtitle=subtitle,
-                 body=body, author=u)
+                 brief_title=brief_title, body=body, author=u)
         # add post tags
         tags = set(map(lambda x: x.strip(), tag_string.split(';')))
         # remove '' tag
@@ -222,6 +223,7 @@ def edit(id):
 
         p.picture = filename
         p.title = form.title.data
+        p.brief_title = form.brief_title.data
         p.subtitle = form.subtitle.data
         p.body = form.body.data
         tag_string = form.tags.data
@@ -249,6 +251,7 @@ def edit(id):
     form.picture.data = p.picture
     form.title.data = p.title
     form.subtitle.data = p.subtitle
+    form.brief_title.data = p.brief_title
     # set previous tag via flask session
     tags = list(map(lambda x: x.name, p.tags.all()))
     session['old_tags'] = tags
