@@ -2,6 +2,7 @@
 
 import os
 from datetime import datetime
+from datetime import date
 
 from flask import render_template, request, flash, redirect, url_for, abort,\
     session
@@ -14,6 +15,7 @@ from .forms import WriteForm, CommentForm, CommentOpenForm
 from ..email import send_mail
 from ..models import User, Post, Comment, Tag
 from .qiniu_ftown import upload_picture
+from sqlalchemy import cast, Date
 
 
 # Blog background management authentication
@@ -293,3 +295,33 @@ def tag_sort(tag_name):
                            tag_name=tag_name,
                            endpoint='blog.tag_sort')
 
+
+@blog.route('/<int:y>/<int:m>/<int:d>/<brief_title>', methods=['GET', 'POST'])
+def post_brief(y, m, d, brief_title):
+    post = Post.query.filter(
+            cast(Post.timestamp, Date) == date(y,m,d)).\
+                filter_by(brief_title=brief_title).first_or_404()
+    form = CommentForm()
+    if form.validate_on_submit():
+        content = form.content.data
+        c = Comment(body=content, author=current_user, post=post)
+        db.session.add(c)
+        db.session.commit()
+        # send remind email when comment
+        subject = '[SOMEONE COMMENT] someone comment your posts.'
+        addr = url_for('.onepost', post_id=post.id, _external=True)
+        send_mail(subject,
+                  "Blog Admin <{0}>".format(os.environ.get('MAIL_USERNAME')),
+                  recipients=[post.author.email],
+                  prefix_template='/mail/comment_remind',
+                  addr=addr, content=content)
+        return redirect(url_for('.post_brief', y=y, m=m, d=d,
+                                brief_title=brief_title)+'#comment')
+    comments = post.comments.all()
+    count = post.comments.count()
+    post.views += 1
+    db.session.add(post)
+    db.session.commit()
+    open_form = CommentOpenForm()
+    return render_template('/blog/post.html', post=post, form=form,
+                           comments=comments, count=count, open_form=open_form)
