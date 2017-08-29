@@ -6,6 +6,7 @@ from app import create_app, db
 from app.models import User, Post, Comment, Tag
 from flask import url_for
 import time
+import datetime
 
 
 class FlaskClientCase(unittest.TestCase):
@@ -23,7 +24,8 @@ class FlaskClientCase(unittest.TestCase):
         # init tag
         t = Tag(name='TEST')
         t2 = Tag(name='INIT_TAG')
-        p = Post(title='test_post', body='post body', author=u)
+        p = Post(title='test_post', body='post body', author=u,
+                 brief_title='brief_title_name')
         p.tags.append(t)
         db.session.add(p)
         db.session.commit()
@@ -253,3 +255,21 @@ class FlaskClientCase(unittest.TestCase):
             open_content='test', open_name='test_username',
             open_email='test@example.com'), follow_redirects=True)
         self.assertTrue(b'test_username' in response.data)
+        today = datetime.date.today()
+        y, m, d = today.year, today.month, today.day
+        response = self.client.post(url_for('blog.post_brief', y=y, m=m, d=d,
+                                            brief_title='brief_title_name'),
+                                    data=dict(
+                                        open_content='test',
+                                        open_name='test_username_brief',
+                                        open_email='test@example.com'),
+                                    follow_redirects=True)
+        self.assertTrue(b'test_username_brief' in response.data)
+
+    def test_date_time_brief_title_url(self):
+        today = datetime.date.today()
+        y, m, d = today.year, today.month, today.day
+        response = self.client.get(url_for('blog.post_brief', y=y, m=m, d=d,
+                                           brief_title='brief_title_name'))
+        self.assertTrue(b'test_post' in response.data)
+        self.assertTrue(b'comment body' in response.data)

@@ -85,6 +85,8 @@ def post():
 @blog.route('/post/open-comment/<int:post_id>', methods=['POST'])
 def open_comment(post_id):
     post = Post.query.get_or_404(post_id)
+    y, m, d = post.timestamp.year, post.timestamp.month, post.timestamp.day
+    brief_title = post.brief_title
     open_form = CommentOpenForm()
     if open_form.validate_on_submit():
         content = open_form.open_content.data
@@ -95,9 +97,19 @@ def open_comment(post_id):
         c = Comment(body=content, author=anonymous_user, post=post)
         db.session.add_all([anonymous_user, c])
         db.session.commit()
-        return redirect(url_for('blog.onepost', post_id=post.id)+'#comment')
+        # send remind email when comment
+        subject = '[SOMEONE COMMENT] someone comment your posts.[OPEN COMMENT]'
+        addr = url_for('.onepost', post_id=post.id, _external=True)
+        send_mail(subject,
+                  "Blog Admin <{0}>".format(os.environ.get('MAIL_USERNAME')),
+                  recipients=[post.author.email],
+                  prefix_template='/mail/comment_remind',
+                  addr=addr, content=content)
+        return redirect(url_for('.post_brief', y=y, m=m, d=d,
+                                brief_title=brief_title)+'#comment')
     flash('邮箱填写错误，请重新填写！')
-    return redirect(url_for('blog.onepost', post_id=post.id) + '#comments-open')
+    return redirect(url_for('.post_brief', y=y, m=m, d=d,
+                            brief_title=brief_title)+'#comment')
 
 
 @blog.route('/post/<int:post_id>', methods=['GET', 'POST'])
