@@ -1,6 +1,6 @@
 {% for post in posts %}
     <div class="post-preview">
-        <a href="{{ url_for('blog.onepost', post_id=post.id) }}">
+        <a href="{{ url_for('blog.post_brief', y=post.timestamp.year, m=post.timestamp.month, d=post.timestamp.day, brief_title=post.brief_title) }}">
             <h2 class="post-title">{{ post.title }}</h2>
             {% if post.subtitle %}
                 <h3 class="post-subtitle">{{ post.subtitle }}</h3>
