@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 ''' Automatic deployment script '''
-
-
+import time
 from fabric.api import env, run, cd, prefix
 import os
 
@@ -25,5 +24,7 @@ def deploy():
             run('git reset --hard origin/master')
             run('supervisorctl -c ./supervisord.conf stop ftown')
             run('./manage.py db migrate')
+            time.sleep(2)
             run('./manage.py db upgrade')
+            time.sleep(5)
             run('supervisorctl -c ./supervisord.conf start ftown')

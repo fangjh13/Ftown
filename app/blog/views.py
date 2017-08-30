@@ -2,6 +2,7 @@
 
 import os
 from datetime import datetime
+from datetime import date
 
 from flask import render_template, request, flash, redirect, url_for, abort,\
     session
@@ -14,6 +15,7 @@ from .forms import WriteForm, CommentForm, CommentOpenForm
 from ..email import send_mail
 from ..models import User, Post, Comment, Tag
 from .qiniu_ftown import upload_picture
+from sqlalchemy import cast, Date
 
 
 # Blog background management authentication
@@ -83,6 +85,8 @@ def post():
 @blog.route('/post/open-comment/<int:post_id>', methods=['POST'])
 def open_comment(post_id):
     post = Post.query.get_or_404(post_id)
+    y, m, d = post.timestamp.year, post.timestamp.month, post.timestamp.day
+    brief_title = post.brief_title
     open_form = CommentOpenForm()
     if open_form.validate_on_submit():
         content = open_form.open_content.data
@@ -93,9 +97,19 @@ def open_comment(post_id):
         c = Comment(body=content, author=anonymous_user, post=post)
         db.session.add_all([anonymous_user, c])
         db.session.commit()
-        return redirect(url_for('blog.onepost', post_id=post.id)+'#comment')
+        # send remind email when comment
+        subject = '[SOMEONE COMMENT] someone comment your posts.[OPEN COMMENT]'
+        addr = url_for('.onepost', post_id=post.id, _external=True)
+        send_mail(subject,
+                  "Blog Admin <{0}>".format(os.environ.get('MAIL_USERNAME')),
+                  recipients=[post.author.email],
+                  prefix_template='/mail/comment_remind',
+                  addr=addr, content=content)
+        return redirect(url_for('.post_brief', y=y, m=m, d=d,
+                                brief_title=brief_title)+'#comment')
     flash('邮箱填写错误，请重新填写！')
-    return redirect(url_for('blog.onepost', post_id=post.id) + '#comments-open')
+    return redirect(url_for('.post_brief', y=y, m=m, d=d,
+                            brief_title=brief_title)+'#comment')
 
 
 @blog.route('/post/<int:post_id>', methods=['GET', 'POST'])
@@ -177,12 +191,13 @@ def write():
 
         title = form.title.data
         subtitle = form.subtitle.data
+        brief_title = form.brief_title.data
         tag_string = form.tags.data
         body = form.body.data
 
         u = User.query.filter_by(username=current_user.username).first_or_404()
         p = Post(picture=filename, title=title, subtitle=subtitle,
-                 body=body, author=u)
+                 brief_title=brief_title, body=body, author=u)
         # add post tags
         tags = set(map(lambda x: x.strip(), tag_string.split(';')))
         # remove '' tag
@@ -222,6 +237,7 @@ def edit(id):
 
         p.picture = filename
         p.title = form.title.data
+        p.brief_title = form.brief_title.data
         p.subtitle = form.subtitle.data
         p.body = form.body.data
         tag_string = form.tags.data
@@ -249,6 +265,7 @@ def edit(id):
     form.picture.data = p.picture
     form.title.data = p.title
     form.subtitle.data = p.subtitle
+    form.brief_title.data = p.brief_title
     # set previous tag via flask session
     tags = list(map(lambda x: x.name, p.tags.all()))
     session['old_tags'] = tags
@@ -290,3 +307,33 @@ def tag_sort(tag_name):
                            tag_name=tag_name,
                            endpoint='blog.tag_sort')
 
+
+@blog.route('/<int:y>/<int:m>/<int:d>/<brief_title>', methods=['GET', 'POST'])
+def post_brief(y, m, d, brief_title):
+    post = Post.query.filter(
+            cast(Post.timestamp, Date) == date(y,m,d)).\
+                filter_by(brief_title=brief_title).first_or_404()
+    form = CommentForm()
+    if form.validate_on_submit():
+        content = form.content.data
+        c = Comment(body=content, author=current_user, post=post)
+        db.session.add(c)
+        db.session.commit()
+        # send remind email when comment
+        subject = '[SOMEONE COMMENT] someone comment your posts.'
+        addr = url_for('.onepost', post_id=post.id, _external=True)
+        send_mail(subject,
+                  "Blog Admin <{0}>".format(os.environ.get('MAIL_USERNAME')),
+                  recipients=[post.author.email],
+                  prefix_template='/mail/comment_remind',
+                  addr=addr, content=content)
+        return redirect(url_for('.post_brief', y=y, m=m, d=d,
+                                brief_title=brief_title)+'#comment')
+    comments = post.comments.all()
+    count = post.comments.count()
+    post.views += 1
+    db.session.add(post)
+    db.session.commit()
+    open_form = CommentOpenForm()
+    return render_template('/blog/post.html', post=post, form=form,
+                           comments=comments, count=count, open_form=open_form)
