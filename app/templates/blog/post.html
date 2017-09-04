@@ -112,4 +112,11 @@
 
     <!-- Footer -->
     {% include '/blog/_footer.html' %}
+
+    {% block scripts %}
+        {{ super() }}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pagedown/1.0/Markdown.Converter.js"> </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pagedown/1.0/Markdown.Editor.js"> </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pagedown/1.0/Markdown.Sanitizer.js"> </script>k
+    {% endblock %}
 {% endblock %}
