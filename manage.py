@@ -14,7 +14,7 @@ if os.path.exists('.env'):
 
 
 from app import create_app, db
-from app.models import User, Post, Comment, Tag
+from app.models import User, Post, Comment, Tag, Book
 from flask_script import Manager, Shell, Server
 from flask_migrate import Migrate, MigrateCommand
 
@@ -27,7 +27,7 @@ manager.add_command('runserver', Server(host='127.0.0.1', port=5000))
 
 def _make_context():
     return dict(app=app, db=db, User=User, Post=Post, Comment=Comment,
-                Tag=Tag)
+                Tag=Tag, Book=Book)
 
 manager.add_command('shell', Shell(make_context=_make_context))
 manager.add_command('db', MigrateCommand)

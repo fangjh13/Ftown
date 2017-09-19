@@ -235,3 +235,12 @@ class Comment(db.Model):
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 
 
+class Book(db.Model):
+    '''豆瓣图书'''
+    __bind_key__ = 'collection'
+    __tablename__ = 'books'
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.Text)
+    title = db.Column(db.Text)
+
+

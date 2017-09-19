@@ -20,6 +20,10 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = \
         'mysql+pymysql://{}:{}@localhost/ftown'.format(
             os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
+    SQLALCHEMY_BINDS = {
+        'collection': 'mysql+pymysql://{}:{}@localhost/collection'.format(
+            os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
+    }
     MAIL_SERVER = "smtp.163.com"
     MAIL_PORT = 25
     MAIL_USE_TLS = False
@@ -33,6 +37,10 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = \
         'mysql+pymysql://{}:{}@localhost/ftown_test'.format(
             os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
+    SQLALCHEMY_BINDS = {
+        'collection': 'mysql+pymysql://{}:{}@localhost/collection_test'.format(
+            os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
+    }
     WTF_CSRF_ENABLED = False
     MAIL_SERVER = "smtp.163.com"
     MAIL_PORT = 25
