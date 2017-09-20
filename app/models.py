@@ -240,7 +240,9 @@ class Book(db.Model):
     __bind_key__ = 'collection'
     __tablename__ = 'books'
     id = db.Column(db.Integer, primary_key=True)
+    image = db.Column(db.Text)
     url = db.Column(db.Text)
     title = db.Column(db.Text)
+    author = db.Column(db.String(20))
 
 
