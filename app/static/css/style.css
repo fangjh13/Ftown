@@ -71,3 +71,7 @@ div.flask-pagedown-preview {
     margin-top: 20px;
     padding: 10px;
 }
+
+a:hover {
+    text-decoration: none;
+}

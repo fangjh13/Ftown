@@ -12,57 +12,15 @@
           <div class="Card-headerText">图书</div>
        </div>
        <ul class="BookList PubIndex-recommends">
-          <li class="BookItem">
-             <a href="/publications/book/119555603">
-                <div class="BookItem-coverWrapper"><img class="BookItem-cover" src="https://img3.doubanio.com/lpic/s29499792.jpg" alt="封面" width="150" height="200"></div>
-                <div class="BookItem-title">摇滚在中国</div>
-                <div class="BookItem-authors">崔健 等</div>
-             </a>
-          </li>
-{#          <li class="BookItem">#}
-{#             <a href="/publications/book/119556079">#}
-{#                <div class="BookItem-coverWrapper"><img class="BookItem-cover" src="https://pic3.zhimg.com/v2-4cf7b2bdce58b6d00a30c483b9f6c042_200x0.jpg" srcset="https://pic3.zhimg.com/v2-4cf7b2bdce58b6d00a30c483b9f6c042_qhd.jpg 2x" alt="封面" width="150" height="200"></div>#}
-{#                <div class="BookItem-title">借钱有理！个人贷款实用知识</div>#}
-{#                <div class="BookItem-authors">南小鹏</div>#}
-{#                <div class="BookItem-promotion">#}
-{#                   <span class="Yuan BookItem-price">#}
-{#                      <span class="Yuan-symbol">¥</span><!-- react-text: 95 -->6.99<!-- /react-text -->#}
-{#                   </span>#}
-{#                </div>#}
-{#             </a>#}
-{#          </li>#}
-{#          <li class="BookItem">#}
-{#             <a href="/publications/book/119555998">#}
-{#                <div class="BookItem-coverWrapper"><img class="BookItem-cover" src="https://pic4.zhimg.com/v2-edaf0cb5518f23338bf397239659f0b7_200x0.jpg" srcset="https://pic4.zhimg.com/v2-edaf0cb5518f23338bf397239659f0b7_qhd.jpg 2x" alt="封面" width="150" height="200"></div>#}
-{#                <div class="BookItem-title">XXOO 那些事 2：非人类篇</div>#}
-{#                <div class="BookItem-authors">王蛐蛐 等</div>#}
-{#                <div class="BookItem-promotion"><span class="BookItem-price">免费</span></div>#}
-{#             </a>#}
-{#          </li>#}
-{#          <li class="BookItem">#}
-{#             <a href="/publications/book/119555946">#}
-{#                <div class="BookItem-coverWrapper"><img class="BookItem-cover" src="https://pic2.zhimg.com/v2-bb3e94ee286b1d17c37d89658193605d_200x0.jpg" srcset="https://pic2.zhimg.com/v2-bb3e94ee286b1d17c37d89658193605d_qhd.jpg 2x" alt="封面" width="150" height="200"></div>#}
-{#                <div class="BookItem-title">你的第一本英文学术写作指导书</div>#}
-{#                <div class="BookItem-authors">Luyao Zou</div>#}
-{#                <div class="BookItem-promotion">#}
-{#                   <span class="Yuan BookItem-price">#}
-{#                      <span class="Yuan-symbol">¥</span><!-- react-text: 113 -->9.99<!-- /react-text -->#}
-{#                   </span>#}
-{#                </div>#}
-{#             </a>#}
-{#          </li>#}
-{#          <li class="BookItem">#}
-{#             <a href="/publications/book/119555756">#}
-{#                <div class="BookItem-coverWrapper"><img class="BookItem-cover" src="https://pic4.zhimg.com/v2-c56ea5aca56a5693bd5e5fa1cc50fb2f_200x0.jpg" srcset="https://pic4.zhimg.com/v2-c56ea5aca56a5693bd5e5fa1cc50fb2f_qhd.jpg 2x" alt="封面" width="150" height="200"></div>#}
-{#                <div class="BookItem-title">大学第一年：我多想 20 岁前就知道的事</div>#}
-{#                <div class="BookItem-authors">凡羽 等</div>#}
-{#                <div class="BookItem-promotion">#}
-{#                   <span class="Yuan BookItem-price">#}
-{#                      <span class="Yuan-symbol">¥</span><!-- react-text: 123 -->4.99<!-- /react-text -->#}
-{#                   </span>#}
-{#                </div>#}
-{#             </a>#}
-{#          </li>#}
+           {% for book in books %}
+               <li class="BookItem">
+                   <a href="{{ book.url }}">
+                       <div class="BookItem-coverWrapper"><img class="BookItem-cover" src="{{ book.image.replace('spic', 'lpic') }}" alt="封面" width="150" height="200"></div>
+                       <div class="BookItem-title">{{ book.title }}</div>
+                       <div class="BookItem-authors">{{ book.author }}</div>
+                   </a>
+               </li>
+           {% endfor %}
        </ul>
     </div>
     <div class="Card">
