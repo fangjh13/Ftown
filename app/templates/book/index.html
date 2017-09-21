@@ -1,5 +1,9 @@
 {% extends "/book/base.html" %}
 
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/ftown.css">
+{% endblock %}
 
 {% block page_content %}
     <div class="Card">

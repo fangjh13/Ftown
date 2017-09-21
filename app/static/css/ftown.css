@@ -56,3 +56,7 @@ nav.navbar {
     font-weight: 700;
     font-size: large;
 }
+
+ul.BookList a:hover {
+    text-decoration: none;
+}

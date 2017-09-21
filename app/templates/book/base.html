@@ -3,10 +3,11 @@
 {% block title %}书床{% endblock %}
 
 {% block head %}
-{{ super() }}
+{#{{ super() }}#}
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block navbar %}
@@ -69,6 +70,9 @@
 {% endblock %}
 
 {% block scripts %}
-{{ super() }}
-{{ moment.include_moment() }}
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    {{ moment.include_moment() }}
+    {{ moment.locale('zh-CN') }}
 {% endblock %}
