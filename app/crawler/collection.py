@@ -8,6 +8,7 @@ import random
 import re
 import os
 import pymysql
+from bs4 import BeautifulSoup
 
 # import local environment
 if os.path.exists('../../.env'):
@@ -50,6 +51,30 @@ def top_five_books():
     return rs
 
 
+def github_trending():
+    ''' 爬取github trending '''
+    rs = []
+    html = GetPage('https://github.com/trending').get()
+    soup = BeautifulSoup(html, 'lxml')
+    items= soup.find_all('li', class_='col-12')
+    for i in items:
+        x = []
+        x.append(i.find('a').contents[2].strip())
+        x.append('https://github.com' + i.find('a')['href'])
+        try:
+            x.append(i.find('p').string.strip())
+        except AttributeError:
+            x.append('')
+        try:
+            x.append(i.find('span',
+                    attrs={'itemprop': 'programmingLanguage'}).string.strip())
+        except AttributeError:
+            x.append('')
+        x.append(i.find('a', class_='mr-3').contents[2].strip())
+        rs.append(x)
+    return rs
+
+
 def truncate(table_name):
     '''清空表'''
     conn = pymysql.connect(host='localhost',
@@ -68,7 +93,7 @@ def truncate(table_name):
         conn.close()
 
 
-def store(table_name, *args):
+def store(table_name, columns, *args):
     '''根据表名分别储存到数据库'''
     conn = pymysql.connect(host='localhost',
                            user=os.getenv('FTOWNUSER'),
@@ -78,7 +103,8 @@ def store(table_name, *args):
                            cursorclass=pymysql.cursors.DictCursor)
     try:
         with conn.cursor() as cursor:
-            sql = "INSERT INTO `{}` (`image`,`url`, `title`, `author`) VALUES (%s, %s, %s, %s)".format(table_name)
+            n = len(columns.split(','))
+            sql = "INSERT INTO `{}` ({}) VALUES ({})".format(table_name, columns, ','.join(['%s'] * n))
             cursor.execute(sql, *args)
         conn.commit()
     finally:
@@ -86,8 +112,15 @@ def store(table_name, *args):
 
 
 if __name__ == '__main__':
+    # 豆瓣图书
     truncate('books')
     books = top_five_books()
     # 写入表名为books数据库
     for e in books:
-        store('books', e)
+        store('books', '`image`,`url`, `title`, `author`',e)
+
+    # github trending
+    truncate('trends')
+    projects = github_trending()
+    for p in projects:
+        store('trends', '`project`, `url`, `desc`, `language`, `star`', p)

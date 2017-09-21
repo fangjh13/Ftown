@@ -273,3 +273,8 @@ class FlaskClientCase(unittest.TestCase):
                                            brief_title='brief_title_name'))
         self.assertTrue(b'test_post' in response.data)
         self.assertTrue(b'comment body' in response.data)
+
+
+    def test_main_index(self):
+        response = self.client.get(url_for('main.index'))
+        self.assertTrue('图书'.encode('utf-8') in response.data)

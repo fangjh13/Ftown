@@ -246,3 +246,14 @@ class Book(db.Model):
     author = db.Column(db.String(20))
 
 
+class Github(db.Model):
+    ''' github trending '''
+    __bind_key__ = 'collection'
+    __tablename__ = 'trends'
+    id = db.Column(db.Integer, primary_key=True)
+    project = db.Column(db.String(256))
+    url = db.Column(db.Text)
+    desc = db.Column(db.Text)
+    language = db.Column(db.String(64))
+    star = db.Column(db.String(64))
+
