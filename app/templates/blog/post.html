@@ -61,7 +61,7 @@
                         <div class="-mob-share-close">取消</div>
                     </div>
                     <div class="-mob-share-ui-bg"></div>
-                    <script id="-mob-share" src="http://f1.webshare.mob.com/code/mob-share.js?appkey=20123951491e4"></script>
+                    <script id="-mob-share" src="https://f1.webshare.mob.com/code/mob-share.js?appkey=20123951491e4"></script>
                     <!--MOB SHARE END-->
 
                     <hr>
@@ -112,4 +112,11 @@
 
     <!-- Footer -->
     {% include '/blog/_footer.html' %}
+
+    {% block scripts %}
+        {{ super() }}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pagedown/1.0/Markdown.Converter.js"> </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pagedown/1.0/Markdown.Editor.js"> </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pagedown/1.0/Markdown.Sanitizer.js"> </script>
+    {% endblock %}
 {% endblock %}

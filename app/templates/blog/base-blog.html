@@ -11,15 +11,22 @@
 {%- endblock %}
 
 {% block styles %}
-  {{ super() }}
+{#   {{ super() }}#}
+
+  {# 国内CDN bootstrap.min.css #}
+  <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
   {# Theme CSS #}
   <link href="/static/css/clean-blog.css" rel="stylesheet">
 
   {# Custom Fonts #}
   <link href="/static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+{#  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>#}
+{#  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>#}
+  <link href='/static/css/font1.css' rel='stylesheet' type='text/css'>
+  <link href='/static/css/font2.css' rel='stylesheet' type='text/css'>
+
+
 {% endblock %}
 
 {% block title %}Fython's Blog{% endblock %}
@@ -69,7 +76,12 @@
 
 
 {% block scripts %}
-  {{ super() }}
+{#   {{ super() }}#}
+
+  {# 国内CDN #}
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
   {{ moment.include_moment() }}
   {{ moment.locale('zh-CN') }}
 
