@@ -38,8 +38,21 @@ div.Card-list-content {
     padding-left: 50px;
 }
 
+div.Card-list-content ol {
+    margin-left: -28px;
+}
+
 div.Card-list-content li {
-    list-style-type: decimal;
     margin-bottom: 4px;
     font-size: 1.1em;
+    border-bottom: 1px #f3f3f3 solid;
+}
+
+div.Card-list-content li:last-child {
+    border-bottom: none
+}
+
+nav.navbar {
+    font-weight: 700;
+    font-size: large;
 }

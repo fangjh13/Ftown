@@ -72,6 +72,48 @@ div.flask-pagedown-preview {
     padding: 10px;
 }
 
+div.little-area {
+    height: 35px;
+}
+
+div.project-name {
+    color: #0366d6;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+span.language-color {
+    background-color: #f34b7d;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+span.star-color {
+    background-color: #f38a4b;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+a.lang-rank {
+    margin-right: 40px;
+}
+
+span.lang {
+    color: #586069;
+    font-size: 13px;
+    margin-left: 3px;
+}
+
+span.lang-stars {
+    color: #586069;
+    font-size: 13px;
+    margin-left: 3px;
+}
+
 a:hover {
     text-decoration: none;
 }

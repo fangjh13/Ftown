@@ -29,8 +29,19 @@
         </div>
         <div class="Card-list-content">
             <ol>
-                <li><a href="">爬虫是不是应该用 Node.js 取代 Python？</a>爬虫是不是应该用 Node.js 取代 Python？</li>
-                <li>百度、谷歌等搜索引擎用的是什么算法来搜索？</li>
+                {% for p in projects %}
+                    <li>
+                        <div class="project-list">
+                            <div class="little-area">
+                                <a href="{{ p.url }}">
+                                    <div class="project-name">{{ p.project }}</div>
+                                </a>
+                            </div>
+                            <p>{{ p.desc }}</p>
+                            <div class="github-tags">{% if p.language %}<a class="lang-rank" href="https://github.com/trending/{{ p.language }}"><span class="language-color"></span><span class="lang">{{ p.language }}</span></a>{% endif %}<span class="star-color"></span><span class="lang-stars">{{ p.star }}</span></div>
+                        </div>
+                    </li>
+                {% endfor %}
             </ol>
         </div>
     </div>

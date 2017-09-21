@@ -278,3 +278,4 @@ class FlaskClientCase(unittest.TestCase):
     def test_main_index(self):
         response = self.client.get(url_for('main.index'))
         self.assertTrue('图书'.encode('utf-8') in response.data)
+        self.assertTrue('Github'.encode('utf-8') in response.data)
