@@ -11,8 +11,9 @@ import pymysql
 from bs4 import BeautifulSoup
 
 # import local environment
-if os.path.exists('../../.env'):
-    with open('../../.env') as f:
+basedir = os.path.abspath(os.path.dirname(__file__)).rsplit('/', 2)[0]
+if os.path.exists(os.path.join(basedir, '.env')):
+    with open(os.path.join(basedir, '.env')) as f:
         for line in f:
             key, value = line.strip().split('=')
             os.environ[key] = value
