@@ -43,8 +43,8 @@
                             <td>{{ moment(p.mtimestamp).format('lll') }}</td>
                             <td width="130px">
                                 <div class="btn-group btn-group-xs">
-                                    <button type="button" class="btn btn-success" onclick="location.href='{{ url_for('blog.edit', id=p.id) }}'">REVISE</button>
-                                    <a class="btn btn-warning" href="{{ url_for('blog.delete', id=p.id) }}">DELETE</a>
+                                    <button type="button" class="btn btn-success" onclick="javascrip:location.href='{{ url_for('blog.edit', id=p.id) }}'">REVISE</button>
+                                    <button type="button" class="btn btn-warning" onclick="javascrip:if(confirm('确认删除？')){location.href='{{ url_for('blog.delete', id=p.id) }}'}">DELETE</button>
                                 </div>
                             </td>
                         </tr>
