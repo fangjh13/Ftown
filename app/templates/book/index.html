@@ -44,4 +44,47 @@
             </ol>
         </div>
     </div>
+    <div class="Card">
+        <div class="Card-header PubIndex-recommendationsHeader">
+            <div class="Card-headerText">SegmentFault</div>
+        </div>
+        <div class="Card-list-content">
+            <ol>
+                {% for p in segments %}
+                    <li>
+                        <div class="project-list">
+                            <div class="little-area">
+                                <a href="{{ p.url }}">
+                                    <div class="project-name">{{ p.item }}</div>
+                                </a>
+                            </div>
+                            <div class="segment-item"><span class="lang-stars" style="margin-right: 40px;">#{{ p.specs }}</span><span class="lang-stars">{{ p.collect }}</span></div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+    <div class="Card">
+        <div class="Card-header PubIndex-recommendationsHeader">
+            <div class="Card-headerText">掘金</div>
+        </div>
+        <div class="Card-list-content">
+            <ol
+                {% for p in projects %}
+                    <li>
+                        <div class="project-list">
+                            <div class="little-area">
+                                <a href="{{ p.url }}">
+                                    <div class="project-name">{{ p.project }}</div>
+                                </a>
+                            </div>
+                            <p>{{ p.desc }}</p>
+                            <div class="github-tags">{% if p.language %}<a class="lang-rank" href="https://github.com/trending/{{ p.language }}"><span class="language-color"></span><span class="lang">{{ p.language }}</span></a>{% endif %}<span class="star-color"></span><span class="lang-stars">{{ p.star }}</span></div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
 {% endblock %}

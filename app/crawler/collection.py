@@ -76,6 +76,22 @@ def github_trending():
     return rs
 
 
+def segmentfault():
+    ''' 爬取segmentfault '''
+    rs = []
+    baseurl = 'https://segmentfault.com'
+    html = GetPage('https://segmentfault.com/news').get()
+    soup = BeautifulSoup(html, 'lxml')
+    news_item = soup.find_all('div', class_='news__item-info')
+    for i in news_item:
+        title = i.find('h4').find('a').text
+        url = baseurl + i.find('h4').find('a')['href']
+        specs = i.find('p', class_='news__item-meta').find('a', class_='ml10').text
+        collect = i.find('span', class_='news__bookmark-text ml5').text
+        rs.append([title, url, specs, collect])
+    return rs
+
+
 def truncate(table_name):
     '''清空表'''
     conn = pymysql.connect(host='localhost',
@@ -125,3 +141,9 @@ if __name__ == '__main__':
     projects = github_trending()
     for p in projects:
         store('trends', '`project`, `url`, `desc`, `language`, `star`', p)
+
+    # segmentfault
+    truncate('segment')
+    items = segmentfault()
+    for p in items:
+        store('segment', '`item`, `url`, `specs`, `collect`', p)
