@@ -85,13 +85,13 @@
   {# Theme JavaScript #}
   <script src="/static/js/clean-blog.min.js"></script>
 
-  {{ moment.include_moment() }}
-  {{ moment.locale('zh-CN') }}
-
   <script>
   $(document).ready(function () {
       $('.container a').attr('target', '_blank');
       $('.container .label-danger').parent().removeAttr('target');
   })
   </script>
+
+  {{ moment.include_moment() }}
+  {{ moment.locale('zh-CN') }}
 {% endblock %}
