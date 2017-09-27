@@ -20,11 +20,14 @@ env.host_string = os.getenv('DEPLOY_HOSTS')
 def deploy():
     with cd('/srv/Ftown'):
         with prefix('source ftownvenv/bin/activate'):
+            # update venv
+            run('pip3 install -r requirement.txt')
+            # git fetch
             run('git fetch --all')
             run('git reset --hard origin/master')
+            # stop app
             run('supervisorctl -c ./supervisord.conf stop ftown')
-            run('./manage.py db migrate')
-            time.sleep(5)
+            # update db
             run('./manage.py db upgrade')
-            time.sleep(6)
+            # start app
             run('supervisorctl -c ./supervisord.conf start ftown')
