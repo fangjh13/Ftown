@@ -96,3 +96,5 @@ __pycache__
 
 # Virtualenv
 ftownvenv/
+
+.qiniu_pythonsdk_hostscache.json

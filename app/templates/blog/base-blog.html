@@ -82,9 +82,16 @@
   <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-  {{ moment.include_moment() }}
-  {{ moment.locale('zh-CN') }}
-
   {# Theme JavaScript #}
   <script src="/static/js/clean-blog.min.js"></script>
+
+  <script>
+  $(document).ready(function () {
+      $('.container a').attr('target', '_blank');
+      $('.container .label-danger').parent().removeAttr('target');
+  })
+  </script>
+
+  {{ moment.include_moment() }}
+  {{ moment.locale('zh-CN') }}
 {% endblock %}

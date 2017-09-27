@@ -44,4 +44,47 @@
             </ol>
         </div>
     </div>
+    <div class="Card">
+        <div class="Card-header PubIndex-recommendationsHeader">
+            <div class="Card-headerText">SegmentFault</div>
+        </div>
+        <div class="Card-list-content">
+            <ol>
+                {% for p in segments %}
+                    <li>
+                        <div class="project-list">
+                            <div class="little-area">
+                                <a href="{{ p.url }}">
+                                    <div class="project-name">{{ p.item }}</div>
+                                </a>
+                            </div>
+                            <div class="segment-item"><span class="lang-stars" style="margin-right: 40px;">#{{ p.specs }}</span><span class="lang-stars">{{ p.collect }}</span></div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+    <div class="Card">
+        <div class="Card-header PubIndex-recommendationsHeader">
+            <div class="Card-headerText">掘金</div>
+        </div>
+        <div class="Card-list-content">
+            <ol>
+                {% for p in juejins %}
+                    <li>
+                        <div class="project-list">
+                            <div class="little-area">
+                                <a href="{{ p.url }}">
+                                    <div class="project-name">{{ p.title }}</div>
+                                </a>
+                            </div>
+                            <p>{{ p.desc }}</p>
+                            <div class=""><span class="lang-stars">#{{ p.tag }}</span></div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
 {% endblock %}

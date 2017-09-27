@@ -113,3 +113,7 @@ span.lang-stars {
     font-size: 13px;
     margin-left: 3px;
 }
+
+div.Card:last-of-type {
+    margin-bottom: 30px !important;
+}
