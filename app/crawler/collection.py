@@ -92,6 +92,20 @@ def segmentfault():
     return rs
 
 
+def juejin():
+    ''' 爬取掘金热门 '''
+    rs = []
+    html = GetPage('https://juejin.im/explore/all?sort=popular').get()
+    soup = BeautifulSoup(html, 'lxml')
+    contents = soup.find_all('div', 'content-box')
+    for c in contents:
+        title = c.find('a', class_='title').text
+        url = 'https://juejin.im' + c.find('a', class_='title')['href']
+        tag = '/'.join([i.text for i in c.find_all('a', class_='tag')])
+        rs.append([title, url, tag])
+    return rs
+
+
 def truncate(table_name):
     '''清空表'''
     conn = pymysql.connect(host='localhost',
@@ -147,3 +161,9 @@ if __name__ == '__main__':
     items = segmentfault()
     for p in items:
         store('segment', '`item`, `url`, `specs`, `collect`', p)
+
+    # juejin
+    truncate('juejin')
+    juejin_items = juejin()
+    for items in juejin_items:
+        store('juejin', '`title`, `url`, `tag`', items)

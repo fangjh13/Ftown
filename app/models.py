@@ -267,4 +267,14 @@ class SegmentFault(db.Model):
     url = db.Column(db.Text)
     specs = db.Column(db.Text)
     collect = db.Column(db.Text)
-    
+
+
+class JueJin(db.Model):
+    ''' 掘金 发现 热门'''
+    __bind_key__ = 'collection'
+    __tablename__ = 'juejin'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text)
+    url = db.Column(db.Text)
+    tag = db.Column(db.Text)
+

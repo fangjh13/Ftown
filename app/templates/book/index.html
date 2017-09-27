@@ -70,17 +70,17 @@
             <div class="Card-headerText">掘金</div>
         </div>
         <div class="Card-list-content">
-            <ol
-                {% for p in projects %}
+            <ol>
+                {% for p in juejins %}
                     <li>
                         <div class="project-list">
                             <div class="little-area">
                                 <a href="{{ p.url }}">
-                                    <div class="project-name">{{ p.project }}</div>
+                                    <div class="project-name">{{ p.title }}</div>
                                 </a>
                             </div>
                             <p>{{ p.desc }}</p>
-                            <div class="github-tags">{% if p.language %}<a class="lang-rank" href="https://github.com/trending/{{ p.language }}"><span class="language-color"></span><span class="lang">{{ p.language }}</span></a>{% endif %}<span class="star-color"></span><span class="lang-stars">{{ p.star }}</span></div>
+                            <div class=""><span class="lang-stars">#{{ p.tag }}</span></div>
                         </div>
                     </li>
                 {% endfor %}
