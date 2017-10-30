@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 ''' Automatic deployment script '''
-import time
 from fabric.api import env, run, cd, prefix
 import os
 
@@ -20,8 +19,6 @@ env.host_string = os.getenv('DEPLOY_HOSTS')
 def deploy():
     with cd('/srv/Ftown'):
         with prefix('source ftownvenv/bin/activate'):
-            # update venv
-            run('pip3 install -r requirement.txt')
             # git fetch
             run('git fetch --all')
             run('git reset --hard origin/master')

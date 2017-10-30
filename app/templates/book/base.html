@@ -73,6 +73,6 @@
     <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    {{ moment.include_moment() }}
+    {{ moment.include_moment('local_js', 'https://cdn.bootcss.com/moment.js/2.10.3/moment-with-locales.min.js') }}
     {{ moment.locale('zh-CN') }}
 {% endblock %}
