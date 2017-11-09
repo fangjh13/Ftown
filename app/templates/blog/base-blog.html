@@ -96,4 +96,15 @@
 
   {{ moment.include_moment('local_js','https://cdn.bootcss.com/moment.js/2.10.3/moment-with-locales.min.js') }}
   {{ moment.locale('zh-CN') }}
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109420143-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-109420143-1');
+  </script>
+
 {% endblock %}
