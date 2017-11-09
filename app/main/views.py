@@ -13,3 +13,8 @@ def index():
     juejins = JueJin.query.limit(15).all()
     return render_template('book/index.html', books=books, projects=projects,
                            segments=segments, juejins=juejins)
+
+
+@main.route('/')
+def google_verification():
+    return render_template('google/google000f78e215d2609a.html')
