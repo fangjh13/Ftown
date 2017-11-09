@@ -19,3 +19,9 @@ def index():
 def google_verification():
     # Google site verification
     return render_template('google/google000f78e215d2609a.html')
+
+
+@main.route('/baidu_verify_nxfEgFiDSN.html')
+def baidu_verification():
+    # baidu site verification
+    return render_template('baidu/baidu_verify_nxfEgFiDSN.html')
