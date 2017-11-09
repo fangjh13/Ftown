@@ -50,7 +50,8 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-    MAIL_SERVER = "smtp.gmail.com"
+    # gmail
+    # MAIL_SERVER = "smtp.gmail.com"
     SQLALCHEMY_DATABASE_URI = \
         'mysql+pymysql://{}:{}@localhost/ftown'.format(
             os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
@@ -58,10 +59,16 @@ class ProductionConfig(Config):
         'collection': 'mysql+pymysql://{}:{}@localhost/collection'.format(
             os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
     }
-    MAIL_PORT = 587
-    MAIL_USE_TLS = True
-    MAIL_USE_SSL = False
+    # gmail
+    # MAIL_PORT = 587
+    # MAIL_USE_TLS = True
+    # MAIL_USE_SSL = False
 
+    # 国内用163
+    MAIL_SERVER = "smtp.163.com"
+    MAIL_PORT = 25
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = False
 
     @classmethod
     def init_app(cls, app):
