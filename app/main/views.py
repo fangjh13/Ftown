@@ -15,6 +15,7 @@ def index():
                            segments=segments, juejins=juejins)
 
 
-@main.route('/')
+@main.route('/google000f78e215d2609a.html')
 def google_verification():
+    # Google site verification
     return render_template('google/google000f78e215d2609a.html')
