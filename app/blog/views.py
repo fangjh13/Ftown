@@ -298,6 +298,8 @@ def like(id):
 @blog.route('/tags/<tag_name>')
 def tag_sort(tag_name):
     tag = Tag.query.filter_by(name=tag_name).first()
+    if not tag:
+        abort(404)
     page = request.args.get('page', 1, type=int)
     pagination = tag.posts.order_by(Post.timestamp.desc()).paginate(
         page, 4, error_out=False)
