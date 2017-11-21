@@ -14,7 +14,7 @@
                         {% if post.subtitle %}
                             <h2 class="subheading">{{ post.subtitle }}</h2>
                         {% endif %}
-                        <span class="meta">Posted by <a href="#">{{ post.author.username }}</a> on {{ moment(post.timestamp).format('MMMM Do YYYY, h:mm:ss a') }}</span>
+                        <span class="meta">由 <a href="#">{{ post.author.username }}</a> 在 {{ moment(post.timestamp).format('MMMM Do YYYY, h:mm:ss a') }} 发布</span>
                     </div>
                 </div>
             </div>
