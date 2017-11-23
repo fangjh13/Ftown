@@ -9,6 +9,7 @@ from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_pagedown import PageDown
+from flask_redis import FlaskRedis
 
 
 db = SQLAlchemy()
@@ -17,6 +18,7 @@ mail = Mail()
 bootstrap = Bootstrap()
 login_manager = LoginManager()
 pagedown = PageDown()
+redis_store = FlaskRedis()
 
 login_manager.login_view = "auth.login"
 login_manager.login_message = "用户未登录，请先登录"
@@ -33,6 +35,7 @@ def create_app(config_name='default'):
     bootstrap.init_app(app)
     login_manager.init_app(app)
     pagedown.init_app(app)
+    redis_store.init_app(app)
 
     from .main import main
     app.register_blueprint(main)
@@ -42,5 +45,8 @@ def create_app(config_name='default'):
 
     from .auth import auth
     app.register_blueprint(auth, url_prefix='/auth')
+
+    from .api import api as api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix='/api/v1')
 
     return app

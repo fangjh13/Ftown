@@ -9,6 +9,7 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024
+    REDIS_URL = "redis://@localhost:6379/1"
 
     @staticmethod
     def init_app(app):
