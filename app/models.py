@@ -143,6 +143,22 @@ class User(db.Model, UserMixin):
             db.session.add(self)
             db.session.commit()
 
+    def generate_basic_auth_token(self, expiration):
+        s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'],
+                                                expires_in=expiration)
+        return s.dumps({
+            "basic_auth": self.id
+        }).decode('utf-8')
+
+    @staticmethod
+    def verify_basic_auth_token(token):
+        s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return User.query.get(data.get('basic_auth', ''))
+
 
 # flask-login user_loader callback
 @login_manager.user_loader
