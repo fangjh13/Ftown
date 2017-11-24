@@ -9,6 +9,7 @@ from markdown import markdown
 import bleach
 from itsdangerous import TimedJSONWebSignatureSerializer
 from hashlib import md5
+from mdx_gfm import GithubFlavoredMarkdownExtension
 
 
 class User(db.Model, UserMixin):
@@ -205,16 +206,46 @@ class Post(db.Model):
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p', 'img']
+        ''' 把md文件转换成html 并过滤不安全标签 '''
+        allowed_tags =  ['a', 'abbr', 'acronym', 'b', 'blockquote', 'br',
+                         'code', 'dd', 'del', 'details', 'div', 'dl', 'dt',
+                         'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7',
+                         'h8', 'hr', 'i', 'img', 'ins', 'kbd', 'li', 'ol',
+                         'p', 'pre', 'q', 'rp', 'rt', 'ruby', 's', 'samp',
+                         'strike', 'strong', 'sub', 'summary', 'sup', 'table',
+                         'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'tt',
+                         'ul', 'var', 'input']
         attrs = {
-            '*': ['class'],
+            '*': ['abbr', 'class', 'accept', 'accept-charset',
+                  'accesskey', 'action', 'align', 'alt', 'axis',
+                  'border', 'cellpadding', 'cellspacing', 'char',
+                  'charoff', 'charset', 'checked',
+                  'clear', 'cols', 'colspan', 'color',
+                  'compact', 'coords', 'datetime', 'dir',
+                  'disabled', 'enctype', 'for', 'frame',
+                  'headers', 'height', 'hreflang',
+                  'hspace', 'ismap', 'label', 'lang',
+                  'maxlength', 'media', 'method',
+                  'multiple', 'name', 'nohref', 'noshade',
+                  'nowrap', 'open', 'prompt', 'readonly', 'rel', 'rev',
+                  'rows', 'rowspan', 'rules', 'scope',
+                  'selected', 'shape', 'size', 'span',
+                  'start', 'summary', 'tabindex', 'target',
+                  'title', 'type', 'usemap', 'valign', 'value',
+                  'vspace', 'width', 'itemprop'],
             'a': ['href', 'rel', 'title'],
-            'img': ['alt', 'src', 'height', 'width', 'align']
+            'img': ['alt', 'src', 'height', 'width', 'align', 'longdesc'],
+            'div': ['itemscope', 'itemtype'],
+            'blockquote': ['cite'],
+            'del': ['cite'],
+            'ins': ['cite'],
+            'q': ['cite'],
+            'input': ['type', 'disabled']
         }
-        target.body_html = bleach.clean(markdown(value, output_format='html'),
-                        tags=allowed_tags, attributes=attrs, strip=True)
+        target.body_html = bleach.clean(
+            markdown(value, extensions=[GithubFlavoredMarkdownExtension()],
+                     output_format='html'),
+            tags=allowed_tags, attributes=attrs, strip=True)
 
     @staticmethod
     def if_modified_update_mtimestamp(target, value, oldvalue, initiator):

@@ -117,3 +117,11 @@ span.lang-stars {
 div.Card:last-of-type {
     margin-bottom: 30px !important;
 }
+
+div.flask-pagedown textarea {
+    height: 750px;
+}
+
+div.flask-pagedown-preview {
+    display: none;
+}
