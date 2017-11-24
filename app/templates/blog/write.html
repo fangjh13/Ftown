@@ -3,10 +3,10 @@
 
 {% block title %}Dashboard{% endblock %}
 
-{% block head %}
-    {{ super() }}
-    {{ pagedown.include_pagedown() }}
-{% endblock %}
+{#{% block head %}#}
+{#    {{ super() }}#}
+{#    {{ pagedown.include_pagedown() }}#}
+{#{% endblock %}#}
 
 {% block page_content %}
     {{ wtf.quick_form(form) }}

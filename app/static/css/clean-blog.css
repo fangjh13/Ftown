@@ -468,5 +468,46 @@ div.comment-open h2 {
   border-bottom: 1px dashed #d3d3d3;
   color: #3c3c3c;
   padding-bottom: 2px;
+}
 
+.markdown-body table {
+  width: 100%;
+}
+
+.markdown-body table, .markdown-body th, .markdown-body td {
+  border: 1px solid #cccccc;
+  border-collapse: collapse;
+}
+
+.markdown-body table td {
+  padding-left: 0.4em;
+  text-align: left;
+}
+
+.markdown-body table th {
+  background-color: white;
+  text-align: center;
+}
+
+.markdown-body table tr:nth-child(odd) {
+  background-color: #eee;
+}
+
+.markdown-body table th:nth-child(1) {
+  padding-left: 0.4em;
+  text-align: left;
+}
+
+.markdown-body h1, .markdown-body h2{
+  border-bottom: 1px solid #eee;
+}
+
+.markdown-body hr {
+  padding: 0px;
+  height: 0.2em;
+  background-color: #e1e4e8;
+}
+.markdown-body a {
+  text-decoration: none;
+  color: #6cc2f5;
 }
