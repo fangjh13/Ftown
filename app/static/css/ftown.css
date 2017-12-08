@@ -60,3 +60,8 @@ nav.navbar {
 ul.BookList a:hover {
     text-decoration: none;
 }
+div.update-time {
+    color: #777;
+    width: 10em;
+    text-align: right;
+}
