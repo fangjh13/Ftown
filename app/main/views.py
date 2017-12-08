@@ -8,16 +8,60 @@ from flask_login import current_user
 from ..blog.forms import CommentForm, CommentOpenForm
 import os
 from app.email import send_mail
+from redis import Redis
+import json
+import datetime
+
+
+def convert_time(timestamp):
+    utc_8 = datetime.timezone(datetime.timedelta(hours=8))
+    d = datetime.datetime.fromtimestamp(float(timestamp)
+                    ).replace(tzinfo=datetime.timezone.utc)
+    return d.astimezone(utc_8)
 
 
 @main.route('/')
 def index():
-    books = Book.query.all()
-    projects = Github.query.limit(15).all()
-    segments = SegmentFault.query.limit(15).all()
-    juejins = JueJin.query.limit(15).all()
-    return render_template('book/index.html', books=books, projects=projects,
-                           segments=segments, juejins=juejins)
+    redis_conn = Redis(host='localhost', port=6379, db=1)
+    # 豆瓣图书
+    # 虚构类
+    books1 = redis_conn.lrange('douban_book_fiction:data', 0, 2)
+    # 非虚构类
+    books2 = redis_conn.lrange('douban_book_non_fiction:data', 0, 1)
+    books = [json.loads(book) for book in (books1 + books2)]
+    books_time = convert_time(
+        redis_conn.get('douban_book_fiction:timestamp').decode('utf-8')
+    ).strftime('%m-%d %H:%M')
+
+    # GitHub
+    projects = [json.loads(i) for i in redis_conn.lrange('github:data', 0, -1)]
+    projects_time = convert_time(
+        redis_conn.get('github:timestamp').decode('utf-8')
+    ).strftime('%m-%d %H:%M')
+
+    # SegmentFault
+    segments = [json.loads(i) for i in redis_conn.lrange('segmentfault:data', 0, 14)]
+    segments_time = convert_time(
+        redis_conn.get('segmentfault:timestamp').decode('utf-8')
+    ).strftime('%m-%d %H:%M')
+
+    # juejin
+    juejins = [json.loads(i) for i in redis_conn.lrange('juejin:data', 0, 14)]
+    juejins_time = convert_time(
+        redis_conn.get('juejin:timestamp').decode('utf-8')
+    ).strftime('%m-%d %H:%M')
+
+    # hacker news
+    h_news = [json.loads(i) for i in redis_conn.lrange('hacker_news:data', 0, 19)]
+    h_news_time = convert_time(
+        redis_conn.get('hacker_news:timestamp').decode('utf-8')
+    ).strftime('%m-%d %H:%M')
+    return render_template('book/index.html',
+                           books=books, books_time=books_time,
+                           projects=projects, projects_time=projects_time,
+                           segments=segments, segments_time=segments_time,
+                           juejins=juejins, juejins_time=juejins_time,
+                           h_news=h_news, h_news_time=h_news_time)
 
 
 @main.route('/google000f78e215d2609a.html')
