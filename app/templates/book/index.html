@@ -9,14 +9,15 @@
     <div class="Card">
        <div class="Card-header PubIndex-recommendationsHeader">
           <div class="Card-headerText">图书</div>
+          <div class="update-time">{{ books_time }}</div>
        </div>
        <ul class="BookList PubIndex-recommends">
            {% for book in books %}
                <li class="BookItem">
-                   <a href="{{ book.url }}">
-                       <div class="BookItem-coverWrapper"><img class="BookItem-cover" src="{{ book.image.replace('spic', 'lpic') }}" alt="封面" width="150" height="200"></div>
-                       <div class="BookItem-title">{{ book.title }}</div>
-                       <div class="BookItem-authors">{{ book.author }}</div>
+                   <a href="{{ book['link'] }}">
+                       <div class="BookItem-coverWrapper"><img class="BookItem-cover" src="{{ book['image'] }}" alt="封面" width="150" height="200"></div>
+                       <div class="BookItem-title">{{ book['title'] }}</div>
+                       <div class="BookItem-authors">{{ book['author'] }}</div>
                    </a>
                </li>
            {% endfor %}
@@ -25,6 +26,7 @@
     <div class="Card">
         <div class="Card-header PubIndex-recommendationsHeader">
             <div class="Card-headerText">Github</div>
+            <div class="update-time">{{ projects_time }}</div>
         </div>
         <div class="Card-list-content">
             <ol>
@@ -32,12 +34,35 @@
                     <li>
                         <div class="project-list">
                             <div class="little-area">
-                                <a href="{{ p.url }}">
-                                    <div class="project-name">{{ p.project }}</div>
+                                <a href="{{ p['link'] }}">
+                                    <div class="project-name">{{ p['project'] }}</div>
                                 </a>
                             </div>
-                            <p>{{ p.desc }}</p>
-                            <div class="github-tags">{% if p.language %}<a class="lang-rank" href="https://github.com/trending/{{ p.language }}"><span class="language-color"></span><span class="lang">{{ p.language }}</span></a>{% endif %}<span class="star-color"></span><span class="lang-stars">{{ p.star }}</span></div>
+                            <p>{{ p['remark'] }}</p>
+                            <div class="github-tags">{% if p['language'] %}<a class="lang-rank" href="https://github.com/trending/{{ p['language'] }}"><span class="language-color"></span><span class="lang">{{ p['language'] }}</span></a>{% endif %}<span class="star-color"></span><span class="lang-stars">{{ p['stars'] }}</span></div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+    <div class="Card">
+        <div class="Card-header PubIndex-recommendationsHeader">
+            <div class="Card-headerText">Hacker News</div>
+            <div class="update-time">{{ h_news_time }}</div>
+        </div>
+        <div class="Card-list-content">
+            <ol>
+                {% for p in h_news %}
+                    <li>
+                        <div class="project-list">
+                            <div class="little-area">
+                                <a href="{{ p['origin'] }}">
+                                    <div class="project-name">{{ p['title'] }}</div>
+                                </a>
+                            </div>
+                            <div class=""><span class="lang-stars" style="margin-right: 40px;"><span class="lang-stars"><a
+                                    href="{{ p['link'] }}">{{ p['comments'] }}讨论</a></span></div>
                         </div>
                     </li>
                 {% endfor %}
@@ -47,6 +72,7 @@
     <div class="Card">
         <div class="Card-header PubIndex-recommendationsHeader">
             <div class="Card-headerText">SegmentFault</div>
+            <div class="update-time">{{ segments_time }}</div>
         </div>
         <div class="Card-list-content">
             <ol>
@@ -54,11 +80,11 @@
                     <li>
                         <div class="project-list">
                             <div class="little-area">
-                                <a href="{{ p.url }}">
-                                    <div class="project-name">{{ p.item }}</div>
+                                <a href="{{ p['link'] }}">
+                                    <div class="project-name">{{ p['title'] }}</div>
                                 </a>
                             </div>
-                            <div class="segment-item"><span class="lang-stars" style="margin-right: 40px;">#{{ p.specs }}</span><span class="lang-stars">{{ p.collect }}</span></div>
+                            <div class="segment-item"><span class="lang-stars" style="margin-right: 40px;">#{{ p['tag'] }}</span><span class="lang-stars">{{ p['collections'] }}收藏</span></div>
                         </div>
                     </li>
                 {% endfor %}
@@ -68,6 +94,7 @@
     <div class="Card">
         <div class="Card-header PubIndex-recommendationsHeader">
             <div class="Card-headerText">掘金</div>
+            <div class="update-time">{{ juejins_time }}</div>
         </div>
         <div class="Card-list-content">
             <ol>
@@ -75,12 +102,11 @@
                     <li>
                         <div class="project-list">
                             <div class="little-area">
-                                <a href="{{ p.url }}">
-                                    <div class="project-name">{{ p.title }}</div>
+                                <a href="{{ p['link'] }}">
+                                    <div class="project-name">{{ p['title'] }}</div>
                                 </a>
                             </div>
-                            <p>{{ p.desc }}</p>
-                            <div class=""><span class="lang-stars">#{{ p.tag }}</span></div>
+                            <div class=""><span class="lang-stars" style="margin-right: 40px;">#{{ p['tag'] }}</span><span class="lang-stars">{{ p['collections'] }}收藏</span></div>
                         </div>
                     </li>
                 {% endfor %}
