@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-from datetime import datetime
 from datetime import date
 
 from flask import render_template, request, flash, redirect, url_for, abort,\
@@ -16,6 +15,10 @@ from ..email import send_mail
 from ..models import User, Post, Comment, Tag
 from .qiniu_ftown import upload_picture
 from sqlalchemy import cast, Date
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
+import random
+from base64 import b64encode
+from io import BytesIO
 
 
 # Blog background management authentication
@@ -31,6 +34,42 @@ from sqlalchemy import cast, Date
 #             return True
 #     return False
 
+
+def generate_captcha_image():
+    """ generate captcha image base64 """
+    # 随机字母:
+    def rndChar():
+        return chr(random.randint(65, 90))
+
+    # 随机颜色1:
+    def rndColor():
+        return (random.randint(64, 255), random.randint(64, 255), random.randint(64, 255))
+
+    # 随机颜色2:
+    def rndColor2():
+        return (random.randint(32, 127), random.randint(32, 127), random.randint(32, 127))
+
+    # 240 x 60:
+    width = 60 * 4
+    height = 60
+    image = Image.new('RGB', (width, height), (255, 255, 255))
+    # 创建Font对象:
+    font = ImageFont.truetype('Arial.ttf', 36)
+    # 创建Draw对象:
+    draw = ImageDraw.Draw(image)
+    # 填充每个像素:
+    for x in range(width):
+        for y in range(height):
+            draw.point((x, y), fill=rndColor())
+    # 输出文字:
+    code = [rndChar() for i in range(4)]
+    for index, t in enumerate(code):
+        draw.text((60 * index + 10, 10), t, font=font, fill=rndColor2())
+    # 模糊:
+    image = image.filter(ImageFilter.BLUR)
+    buffer = BytesIO()
+    image.save(buffer, format='JPEG')
+    return code, str(b64encode(buffer.getvalue()), 'utf-8')
 
 
 @blog.route('/')
@@ -89,6 +128,10 @@ def open_comment(post_id):
     brief_title = post.brief_title
     open_form = CommentOpenForm()
     if open_form.validate_on_submit():
+        if session['code'] != open_form.open_captcha.data.upper():
+            flash('验证码错误，请重新填写')
+            return redirect(url_for('.post_brief', y=y, m=m, d=d,
+                                    brief_title=brief_title) + '#alert-message')
         content = open_form.open_content.data
         open_name = open_form.open_name.data
         open_email = open_form.open_email.data
@@ -107,9 +150,9 @@ def open_comment(post_id):
                   addr=addr, content=content)
         return redirect(url_for('.post_brief', y=y, m=m, d=d,
                                 brief_title=brief_title)+'#comment')
-    flash('邮箱填写错误，请重新填写！')
+    flash('信息填写错误，请重新填写！')
     return redirect(url_for('.post_brief', y=y, m=m, d=d,
-                            brief_title=brief_title)+'#comment')
+                            brief_title=brief_title)+'#alert-message')
 
 
 @blog.route('/post/<int:post_id>', methods=['GET', 'POST'])
@@ -136,14 +179,19 @@ def onepost(post_id):
     db.session.add(post)
     db.session.commit()
     open_form = CommentOpenForm()
+    code, captcha_b64 = generate_captcha_image()
     return render_template('/blog/post.html', post=post, form=form,
-                           comments=comments, count=count, open_form=open_form)
+                           comments=comments, count=count, open_form=open_form,
+                           captcha_b64=captcha_b64, code=''.join(code))
 
 
 @blog.route('/contact', methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
         form = request.form
+        if session['code'] != form['captcha'].upper():
+            flash("验证码错误请重新输入")
+            return redirect(url_for('.contact'))
         subject = '[IMPORTANT REPLY] someone contact to you'
         send_mail(subject,
                   "Blog Admin <{0}>".format(os.environ.get('MAIL_USERNAME')),
@@ -151,8 +199,10 @@ def contact():
                   prefix_template='/mail/mail_contact',
                   form=form)
         flash('提交成功，我会很快联系你的')
-        redirect(url_for('.contact'))
-    return render_template('/blog/contact.html')
+        return redirect(url_for('.contact'))
+    code, captcha_b64 = generate_captcha_image()
+    session['code'] = ''.join(code)
+    return render_template('/blog/contact.html', captcha_b64=captcha_b64)
 
 
 @blog.route('/dashboard')
@@ -337,5 +387,8 @@ def post_brief(y, m, d, brief_title):
     db.session.add(post)
     db.session.commit()
     open_form = CommentOpenForm()
+    code, captcha_b64 = generate_captcha_image()
+    session['code'] = ''.join(code)
     return render_template('/blog/post.html', post=post, form=form,
-                           comments=comments, count=count, open_form=open_form)
+                           comments=comments, count=count, open_form=open_form,
+                           captcha_b64=captcha_b64, code=''.join(code))
