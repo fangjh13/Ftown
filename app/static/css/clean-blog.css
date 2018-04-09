@@ -463,6 +463,9 @@ div.comment-open #open_name {
 div.comment-open #open_email {
   width: 40%;
 }
+div.comment-open #open_captcha {
+  width: 40%;
+}
 div.comment-open h2 {
   padding-top: 2em;
   border-bottom: 1px dashed #d3d3d3;
