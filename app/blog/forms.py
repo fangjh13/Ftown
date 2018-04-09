@@ -29,5 +29,6 @@ class CommentForm(FlaskForm):
 class CommentOpenForm(FlaskForm):
     open_content = PageDownField('留言', validators=[DataRequired()])
     open_name = StringField("姓名", validators=[DataRequired()])
-    open_email = StringField("邮箱", validators=[DataRequired(), Email()])
+    open_email = StringField("邮箱", validators=[Email(), DataRequired()])
+    open_captcha = StringField("验证码", validators=[DataRequired()])
     open_submit = SubmitField("提交")

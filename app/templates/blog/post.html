@@ -101,7 +101,9 @@
 
                             {{ wtf.form_field(open_form.open_content) }}
                             {{ wtf.form_field(open_form.open_name) }}
-                            {{ wtf.form_field(open_form.open_email) }}
+                            {{ wtf.form_field(open_form.open_email, type="email") }}
+                            <label class="captcha-img"><img src="data:image/jpg;base64,{{ captcha_b64 }}"></label>
+                            {{ wtf.form_field(open_form.open_captcha) }}
                             {{ wtf.form_field(open_form.open_submit) }}
                         </form>
                     </div>
