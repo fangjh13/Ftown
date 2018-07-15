@@ -514,3 +514,7 @@ div.comment-open h2 {
   text-decoration: none;
   color: #6cc2f5;
 }
+.markdown-body img {
+  width: 100%;
+  height: auto;
+}
