@@ -15,7 +15,7 @@
 {#   {{ super() }}#}
 
   {# 国内CDN bootstrap.min.css #}
-  <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
   {# Theme CSS #}
   <link href="/static/css/clean-blog.css" rel="stylesheet">
@@ -80,8 +80,8 @@
 {#   {{ super() }}#}
 
   {# 国内CDN #}
-  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-  <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
   {# Theme JavaScript #}
   <script src="/static/js/clean-blog.min.js"></script>
@@ -94,7 +94,7 @@
 {#  })#}
 {#  </script>#}
 
-  {{ moment.include_moment('local_js','https://cdn.bootcss.com/moment.js/2.10.3/moment-with-locales.min.js') }}
+  {{ moment.include_moment('local_js','https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js') }}
   {{ moment.locale('zh-CN') }}
 
   <!-- Global site tag (gtag.js) - Google Analytics -->

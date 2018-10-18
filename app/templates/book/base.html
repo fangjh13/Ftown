@@ -11,7 +11,7 @@
 
 {% block styles %}
     <link rel="stylesheet" href="/static/css/style.css">
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block navbar %}
@@ -74,10 +74,10 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    {{ moment.include_moment('local_js', 'https://cdn.bootcss.com/moment.js/2.10.3/moment-with-locales.min.js') }}
+    {{ moment.include_moment('local_js', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js') }}
     {{ moment.locale('zh-CN') }}
 
 
