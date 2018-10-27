@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from . import main
-from ..models import Book, Github, SegmentFault, JueJin, Post, Comment
+from .. import redis_store
+from ..models import Post, Comment
 from app import db
 from flask import render_template, url_for, redirect
 from flask_login import current_user
 from ..blog.forms import CommentForm, CommentOpenForm
 import os
 from app.email import send_mail
-from redis import Redis
 import json
 import datetime
 
@@ -22,39 +22,38 @@ def convert_time(timestamp):
 
 @main.route('/')
 def index():
-    redis_conn = Redis(host='localhost', port=6379, db=1)
     # 豆瓣图书
     # 虚构类
-    books1 = redis_conn.lrange('douban_book_fiction:data', 0, 2)
+    books1 = redis_store.lrange('douban_book_fiction:data', 0, 2)
     # 非虚构类
-    books2 = redis_conn.lrange('douban_book_non_fiction:data', 0, 1)
+    books2 = redis_store.lrange('douban_book_non_fiction:data', 0, 1)
     books = [json.loads(book) for book in (books1 + books2)]
     books_time = convert_time(
-        redis_conn.get('douban_book_fiction:timestamp').decode('utf-8')
+        redis_store.get('douban_book_fiction:timestamp').decode('utf-8')
     ).strftime('%m-%d %H:%M')
 
     # GitHub
-    projects = [json.loads(i) for i in redis_conn.lrange('github:data', 0, -1)]
+    projects = [json.loads(i) for i in redis_store.lrange('github:data', 0, -1)]
     projects_time = convert_time(
-        redis_conn.get('github:timestamp').decode('utf-8')
+        redis_store.get('github:timestamp').decode('utf-8')
     ).strftime('%m-%d %H:%M')
 
     # SegmentFault
-    segments = [json.loads(i) for i in redis_conn.lrange('segmentfault:data', 0, 14)]
+    segments = [json.loads(i) for i in redis_store.lrange('segmentfault:data', 0, 14)]
     segments_time = convert_time(
-        redis_conn.get('segmentfault:timestamp').decode('utf-8')
+        redis_store.get('segmentfault:timestamp').decode('utf-8')
     ).strftime('%m-%d %H:%M')
 
     # juejin
-    juejins = [json.loads(i) for i in redis_conn.lrange('juejin:data', 0, 14)]
+    juejins = [json.loads(i) for i in redis_store.lrange('juejin:data', 0, 14)]
     juejins_time = convert_time(
-        redis_conn.get('juejin:timestamp').decode('utf-8')
+        redis_store.get('juejin:timestamp').decode('utf-8')
     ).strftime('%m-%d %H:%M')
 
     # hacker news
-    h_news = [json.loads(i) for i in redis_conn.lrange('hacker_news:data', 0, 19)]
+    h_news = [json.loads(i) for i in redis_store.lrange('hacker_news:data', 0, 19)]
     h_news_time = convert_time(
-        redis_conn.get('hacker_news:timestamp').decode('utf-8')
+        redis_store.get('hacker_news:timestamp').decode('utf-8')
     ).strftime('%m-%d %H:%M')
     return render_template('book/index.html',
                            books=books, books_time=books_time,

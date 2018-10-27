@@ -4,7 +4,7 @@ from datetime import datetime
 from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from flask import current_app, request
+from flask import current_app
 from markdown import markdown
 import bleach
 from itsdangerous import TimedJSONWebSignatureSerializer
@@ -118,10 +118,7 @@ class User(db.Model, UserMixin):
         return False
 
     def gravatar(self, size=45, default='retro', rating='x'):
-        if request.is_secure:
-            header = 'https://www.gravatar.com/avatar'
-        else:
-            header = 'http://www.gravatar.com/avatar'
+        header = 'https://www.gravatar.com/avatar'
         if self.avatar_hash:
             hash = self.avatar_hash
         elif self.email:
@@ -280,48 +277,3 @@ class Comment(db.Model):
                         tags=allowed_tags, attributes=attrs, strip=True)
 
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
-
-
-class Book(db.Model):
-    '''豆瓣图书'''
-    __bind_key__ = 'collection'
-    __tablename__ = 'books'
-    id = db.Column(db.Integer, primary_key=True)
-    image = db.Column(db.Text)
-    url = db.Column(db.Text)
-    title = db.Column(db.Text)
-    author = db.Column(db.String(20))
-
-
-class Github(db.Model):
-    ''' github trending '''
-    __bind_key__ = 'collection'
-    __tablename__ = 'trends'
-    id = db.Column(db.Integer, primary_key=True)
-    project = db.Column(db.String(256))
-    url = db.Column(db.Text)
-    desc = db.Column(db.Text)
-    language = db.Column(db.String(64))
-    star = db.Column(db.String(64))
-
-
-class SegmentFault(db.Model):
-    ''' segmentfault 热门头条'''
-    __bind_key__ = 'collection'
-    __tablename__ = 'segment'
-    id = db.Column(db.Integer, primary_key=True)
-    item = db.Column(db.Text)
-    url = db.Column(db.Text)
-    specs = db.Column(db.Text)
-    collect = db.Column(db.Text)
-
-
-class JueJin(db.Model):
-    ''' 掘金 发现 热门'''
-    __bind_key__ = 'collection'
-    __tablename__ = 'juejin'
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.Text)
-    url = db.Column(db.Text)
-    tag = db.Column(db.Text)
-

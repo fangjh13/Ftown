@@ -39,37 +39,37 @@ class FlaskClientCase(unittest.TestCase):
         self.app_context.pop()
 
     def test_main_index(self):
-        response = self.client.get(url_for('main.index'),
+        response = self.client.get('/',
                                    follow_redirects=True)
-        self.assertTrue(b'Fython' in response.data)
+        self.assertTrue('博客' in response.get_data(as_text=True))
 
     def test_blog_index(self):
-        response = self.client.get(url_for('blog.home'))
-        self.assertTrue(b'Hello Blog' in response.data)
+        response = self.client.get('/blog', follow_redirects=True)
+        self.assertTrue('Hello Blog' in response.get_data(as_text=True))
 
     def test_blog_about(self):
-        response = self.client.get(url_for('blog.about'))
+        response = self.client.get('/blog/about')
         self.assertTrue(b'About Me' in response.data)
 
     def test_user_login_logout(self):
         # login
-        response = self.client.post(url_for('auth.login'), data=dict(
+        response = self.client.post('/auth/login', data=dict(
             email='test@example.com', password='123456'), follow_redirects=True)
         self.assertTrue(b'Hello Blog' in response.data)
         # 'blog.dashboard' required login
-        response = self.client.get(url_for('blog.dashboard'))
+        response = self.client.get('/blog/dashboard')
         self.assertTrue(response.status_code == 200)
         # logout
-        self.client.get(url_for('auth.logout'))
+        self.client.get('/auth/logout')
         # try go to dashboard
-        response = self.client.get(url_for('blog.dashboard'),
+        response = self.client.get('/blog/dashboard',
                                    follow_redirects=True)
         self.assertTrue(response.status_code == 200)
         self.assertTrue('忘记密码?'.encode('utf-8') in response.data)
 
     def test_user_login_with_invalid(self):
         # login with invaild password
-        response = self.client.post(url_for('auth.login'), data=dict(
+        response = self.client.post('/auth/login', data=dict(
             email='test@example.com', password='123'), follow_redirects=True)
         # test flash message
         self.assertTrue('用户名或密码错误，请重试'.encode('utf-8') in response.data)
@@ -92,7 +92,7 @@ class FlaskClientCase(unittest.TestCase):
     def test_post_views(self):
         p = Post.query.first()
         self.assertTrue(p.views == 0)
-        self.client.get(url_for('blog.post'))
+        self.client.get('/blog/post')
         p = Post.query.first()
         response = self.client.get('/blog/post/1')
         self.assertTrue("浏览量 2".encode('utf-8') in response.data)
@@ -103,18 +103,18 @@ class FlaskClientCase(unittest.TestCase):
     def test_index_like(self):
         p = Post.query.first()
         self.assertTrue(p.likes == 0)
-        response = self.client.get(url_for('blog.like', id=p.id),
+        response = self.client.get('/blog/like/{}'.format(p.id),
                                    follow_redirects=True)
         self.assertTrue(b'1 Likes' in response.data)
         p1 = Post.query.first()
         self.assertTrue(p1.likes == 1)
 
     def test_user_register_index(self):
-        response = self.client.get(url_for('auth.register'))
+        response = self.client.get('/auth/register')
         self.assertTrue('注册'.encode('utf-8') in response.data)
 
     def test_user_register_invalid_password(self):
-        response = self.client.post(url_for('auth.register'),
+        response = self.client.post('/auth/register',
                                     data=dict(email='test2@example.com',
                                               username='user',
                                               password='1234',
@@ -123,7 +123,7 @@ class FlaskClientCase(unittest.TestCase):
         self.assertTrue('两次密码输入不一致'.encode('utf-8') in response.data)
 
     def test_user_register_unconfirmed(self):
-        response = self.client.post(url_for('auth.register'),
+        response = self.client.post('/auth/register',
                                     data=dict(email='test2@example.com',
                                               username='user',
                                               password='12345',
@@ -131,7 +131,7 @@ class FlaskClientCase(unittest.TestCase):
                                     follow_redirects=True)
         self.assertTrue('用户验证邮箱已发送到您的邮箱，请查收'.encode('utf-8')
                         in response.data)
-        response = self.client.post(url_for('auth.login'),
+        response = self.client.post('/auth/login',
                                     data=dict(email='test2@example.com',
                                               password='12345'),
                                     follow_redirects=True)
@@ -139,15 +139,15 @@ class FlaskClientCase(unittest.TestCase):
 
     def test_change_email(self):
         # login user
-        self.client.post(url_for('auth.login'), data=dict(
+        self.client.post('/auth/login', data=dict(
             email='test@example.com', password='123456'), follow_redirects=True)
-        response = self.client.post(url_for('auth.change_email_request'),
+        response = self.client.post('/auth/change-email',
                                     data=dict(email='change2email@example.com',
                                               email2='change2email@example.com',
                                               password='wrong password'),
                                     follow_redirects=True)
-        self.assertTrue('用户密码错误'.encode('utf-8') in response.data)
-        response = self.client.post(url_for('auth.change_email_request'),
+        self.assertTrue('用户密码错误' in response.get_data(as_text=True))
+        response = self.client.post('/auth/change-email',
                                     data=dict(email='change2email@example.com',
                                               email2='change2email@example.com',
                                               password='123456'),
@@ -156,39 +156,36 @@ class FlaskClientCase(unittest.TestCase):
                         in response.data)
 
     def test_reset_password_request(self):
-        response = self.client.get(url_for('auth.reset_password_request'))
-        self.assertTrue('重置密码'.encode('utf-8') in response.data)
-        response = self.client.post(url_for('auth.reset_password_request'),
+        response = self.client.get('/auth/reset', follow_redirects=True)
+        self.assertTrue('重置密码' in response.get_data(as_text=True))
+        response = self.client.post('/auth/reset',
                                     data=dict(email='not_exist@example.com'),
                                     follow_redirects=True)
-        self.assertTrue('用户邮箱不存在'.encode('utf-8') in response.data)
+        self.assertTrue('用户邮箱不存在' in response.get_data(as_text=True))
 
     def test_reset_password(self):
-        response = self.client.get(url_for('auth.reset_password',
-                                           token='errorToken'))
-        self.assertTrue('重置密码'.encode('utf-8') in response.data)
-        response = self.client.post(url_for('auth.reset_password',
-                                            token='errorToken'),
+        response = self.client.get('/auth/reset/{}'.format('errorToken'))
+        self.assertTrue('重置密码' in response.get_data(as_text=True))
+        response = self.client.post('/auth/reset/{}'.format('errorToken'),
                                     data=dict(email='test@example.com',
                                               password='123456',
                                               password2='123'),
                                     follow_redirects=True)
-        self.assertTrue('两次密码输入不一致'.encode('utf-8') in response.data)
-        response = self.client.post(url_for('auth.reset_password',
-                                            token='errorToken'),
+        self.assertTrue('两次密码输入不一致' in response.get_data(as_text=True))
+        response = self.client.post('/auth/reset/{}'.format('errorToken'),
                                     data=dict(email='test@example.com',
                                               password='1',
                                               password2='1'),
                                     follow_redirects=True)
-        self.assertTrue('链接非法或已过期'.encode('utf-8') in response.data)
+        self.assertTrue('链接非法或已过期' in response.get_data(as_text=True))
 
     def test_change_password(self):
-        response = self.client.get(url_for('auth.change_password'),
+        response = self.client.get('/auth/change-password',
                                    follow_redirects=True)
-        self.assertTrue('用户未登录，请先登录'.encode('utf-8') in response.data)
-        response = self.client.post(url_for('auth.login'), data=dict(
+        self.assertTrue('用户未登录，请先登录' in response.get_data(as_text=True))
+        response = self.client.post('/auth/login', data=dict(
             email='test@example.com', password='123456'), follow_redirects=True)
-        response = self.client.post(url_for('auth.change_password'),
+        response = self.client.post('/auth/change-password',
                                     data=dict(old_password='123',
                                               password='111',
                                               password2='111'),
@@ -196,69 +193,69 @@ class FlaskClientCase(unittest.TestCase):
         self.assertTrue('旧密码输入不正确'.encode('utf-8') in response.data)
 
     def test_single_user_posts(self):
-        response = self.client.get(url_for('blog.user_post', username='test'))
+        response = self.client.get('/post/test', follow_redirects=True)
         self.assertTrue(b'test_post' in response.data)
 
     def test_single_post(self):
-        response = self.client.get(url_for('blog.onepost', post_id=1))
+        response = self.client.get('/blog/post/1', follow_redirects=True)
         self.assertTrue(b'comment body' in response.data)
 
     def test_post_comment(self):
-        response = self.client.get(url_for('blog.post'))
+        response = self.client.get('/blog/post')
         self.assertTrue('您还没有登录'.encode('utf-8') in
                         response.data)
-        response = self.client.post(url_for('auth.login'), data=dict(
+        response = self.client.post('/auth/login', data=dict(
             email='test@example.com', password='123456'), follow_redirects=True)
         self.assertFalse('您还没有登录'.encode('utf-8') in
                          response.data)
-        response = self.client.post(url_for('blog.post'), data=dict(
+        response = self.client.post('/blog/post', data=dict(
             content='test comment content'), follow_redirects=True)
         self.assertTrue(b'test comment content' in response.data)
 
     def test_tags(self):
-        response = self.client.get(url_for('blog.home'))
+        response = self.client.get('/blog', follow_redirects=True)
         self.assertTrue(b'TEST' in response.data)
-        response = self.client.get(url_for('blog.onepost', post_id=1))
+        response = self.client.get('/blog/onepost/1', follow_redirects=True)
         self.assertTrue(b'TEST' in response.data)
 
     def test_sort_tags(self):
-        response = self.client.get(url_for('blog.tag_sort', tag_name='TEST'))
+        response = self.client.get('/blog/tags/TEST'.format('TEST'))
         self.assertTrue(b'test_post' in response.data)
 
     def test_compose_post_with_tag(self):
         # login
-        response = self.client.post(url_for('auth.login'), data=dict(
+        response = self.client.post('/auth/login', data=dict(
             email='test@example.com', password='123456'), follow_redirects=True)
         # post
         time.sleep(1)
-        response = self.client.post(url_for('blog.write'), data=dict(
+        response = self.client.post('/blog/write', data=dict(
             title='test tag title', tags='test_tag;TWO', body='body'),
                                     follow_redirects=True)
         self.assertTrue('test_tag'.encode('utf-8') in response.data)
 
     def test_edit_post_with_tag(self):
         # login
-        response = self.client.post(url_for('auth.login'), data=dict(
+        response = self.client.post('/auth/login', data=dict(
             email='test@example.com', password='123456'), follow_redirects=True)
         # edit post id=1
-        response = self.client.post(url_for('blog.edit', id=1), data=dict(
+        response = self.client.post('/blog/edit/1', data=dict(
             title='title', tags='new_tag', body='body',
-            brief_title='brief_title'),
+            brief_title='brief_title', id=1),
                                     follow_redirects=True)
         self.assertTrue(b'new_tag' in response.data)
         self.assertFalse(b'INIT_TAG' in response.data)
 
     def test_post_anonymous_comment(self):
-        response = self.client.get(url_for('blog.post'))
-        self.assertTrue('免登录入口'.encode('utf-8') in response.data)
-        response = self.client.post(url_for('blog.post'), data=dict(
+        response = self.client.get('/blog/post')
+        self.assertTrue('免登录入口' in response.get_data(as_text=True))
+        response = self.client.post('/blog/post', data=dict(
             open_content='test', open_name='test_username',
             open_email='test@example.com'), follow_redirects=True)
         self.assertTrue(b'test_username' in response.data)
         today = datetime.date.today()
         y, m, d = today.year, today.month, today.day
-        response = self.client.post(url_for('blog.post_brief', y=y, m=m, d=d,
-                                            brief_title='brief_title_name'),
+        response = self.client.post('/blog/{}/{}/{}/{}'.format(
+            y, m, d, 'brief_title_name'),
                                     data=dict(
                                         open_content='test',
                                         open_name='test_username_brief',
@@ -267,15 +264,9 @@ class FlaskClientCase(unittest.TestCase):
         self.assertTrue(b'test_username_brief' in response.data)
 
     def test_date_time_brief_title_url(self):
-        today = datetime.date.today()
+        today = datetime.datetime.now(datetime.timezone.utc)
         y, m, d = today.year, today.month, today.day
-        response = self.client.get(url_for('blog.post_brief', y=y, m=m, d=d,
-                                           brief_title='brief_title_name'))
-        self.assertTrue(b'test_post' in response.data)
-        self.assertTrue(b'comment body' in response.data)
-
-
-    def test_main_index(self):
-        response = self.client.get(url_for('main.index'))
-        self.assertTrue('图书'.encode('utf-8') in response.data)
-        self.assertTrue('Github'.encode('utf-8') in response.data)
+        response = self.client.get('/blog/{}/{}/{}/{}'.format(
+            y, m, d, 'brief_title_name'), follow_redirects=True)
+        self.assertTrue('test_post' in response.get_data(as_text=True))
+        self.assertTrue('comment body' in response.get_data(as_text=True))
