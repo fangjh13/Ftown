@@ -1,0 +1,15 @@
+[Unit]
+Description=Gunicorn instance to serve myproject Ftown
+Requires=network-online.target
+After=network.target
+
+[Service]
+User=ftown
+Group=www-data
+WorkingDirectory=/srv/Ftown
+Environment="PATH=/srv/Ftown/venv/bin"
+ExecStart=/srv/Ftown/venv/bin/gunicorn --workers 4 --bind unix:ftown.sock -m 007 manage:app
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
