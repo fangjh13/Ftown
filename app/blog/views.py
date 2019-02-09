@@ -128,7 +128,7 @@ def open_comment(post_id):
     brief_title = post.brief_title
     open_form = CommentOpenForm()
     if open_form.validate_on_submit():
-        if session['code'] != open_form.open_captcha.data.upper():
+        if (not session.get('code')) or (session['code'] != open_form.open_captcha.data.upper()):
             flash('验证码错误，请重新填写')
             return redirect(url_for('.post_brief', y=y, m=m, d=d,
                                     brief_title=brief_title) + '#alert-message')
