@@ -38,10 +38,10 @@ class FlaskClientCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def test_main_index(self):
-        response = self.client.get('/',
-                                   follow_redirects=True)
-        self.assertTrue('博客' in response.get_data(as_text=True))
+    # def test_main_index(self):
+    #     response = self.client.get('/',
+    #                                follow_redirects=True)
+    #     self.assertTrue('博客' in response.get_data(as_text=True))
 
     def test_blog_index(self):
         response = self.client.get('/blog', follow_redirects=True)

@@ -4,7 +4,6 @@ asn1crypto==0.24.0
 backcall==0.1.0
 bcrypt==3.1.4
 beautifulsoup4==4.6.3
-bleach==3.0.2
 blinker==1.4
 certifi==2018.10.15
 cffi==1.11.5
@@ -25,6 +24,7 @@ Flask-Redis==0.3.0
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
 gunicorn==19.9.0
+houdini.py==0.1.0
 html5lib==1.0.1
 idna==2.7
 ipython==7.0.1
@@ -36,6 +36,7 @@ lxml==4.2.5
 Mako==1.0.7
 Markdown==2.6.9
 MarkupSafe==1.0
+misaka==2.1.1
 paramiko==2.4.2
 parso==0.3.1
 pexpect==4.6.0
@@ -43,7 +44,6 @@ pickleshare==0.7.5
 Pillow==5.3.0
 prompt-toolkit==2.0.6
 ptyprocess==0.6.0
-py-gfm==0.1.4
 pyasn1==0.4.4
 pycparser==2.19
 Pygments==2.2.0

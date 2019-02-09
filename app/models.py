@@ -5,11 +5,35 @@ from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask import current_app
-from markdown import markdown
-import bleach
 from itsdangerous import TimedJSONWebSignatureSerializer
 from hashlib import md5
-from mdx_gfm import GithubFlavoredMarkdownExtension
+import houdini as h
+import misaka as m
+from pygments import highlight
+from pygments.formatters import HtmlFormatter, ClassNotFound
+from pygments.lexers import get_lexer_by_name
+
+
+class HighlighterRenderer(m.HtmlRenderer):
+    """
+    uses Pygments to highlight code (houdini is used to escape the HTML)
+    """
+    def blockcode(self, text, lang):
+        try:
+            lexer = get_lexer_by_name(lang, stripall=True)
+        except ClassNotFound:
+            lexer = None
+
+        if lexer:
+            formatter = HtmlFormatter()
+            return highlight(text, lexer, formatter)
+        return '\n<pre><code>{}</code></pre>\n'.format(
+                            h.escape_html(text.strip()))
+
+
+# markdown process
+renderer = HighlighterRenderer()
+md = m.Markdown(renderer, extensions=('fenced-code',))
 
 
 class User(db.Model, UserMixin):
@@ -203,51 +227,13 @@ class Post(db.Model):
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        ''' 把md文件转换成html 并过滤不安全标签 '''
-        allowed_tags =  ['a', 'abbr', 'acronym', 'b', 'blockquote', 'br',
-                         'code', 'dd', 'del', 'details', 'div', 'dl', 'dt',
-                         'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7',
-                         'h8', 'hr', 'i', 'img', 'ins', 'kbd', 'li', 'ol',
-                         'p', 'pre', 'q', 'rp', 'rt', 'ruby', 's', 'samp',
-                         'strike', 'strong', 'sub', 'summary', 'sup', 'table',
-                         'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'tt',
-                         'ul', 'var', 'input']
-        attrs = {
-            '*': ['abbr', 'class', 'accept', 'accept-charset',
-                  'accesskey', 'action', 'align', 'alt', 'axis',
-                  'border', 'cellpadding', 'cellspacing', 'char',
-                  'charoff', 'charset', 'checked',
-                  'clear', 'cols', 'colspan', 'color',
-                  'compact', 'coords', 'datetime', 'dir',
-                  'disabled', 'enctype', 'for', 'frame',
-                  'headers', 'height', 'hreflang',
-                  'hspace', 'ismap', 'label', 'lang',
-                  'maxlength', 'media', 'method',
-                  'multiple', 'name', 'nohref', 'noshade',
-                  'nowrap', 'open', 'prompt', 'readonly', 'rel', 'rev',
-                  'rows', 'rowspan', 'rules', 'scope',
-                  'selected', 'shape', 'size', 'span',
-                  'start', 'summary', 'tabindex', 'target',
-                  'title', 'type', 'usemap', 'valign', 'value',
-                  'vspace', 'width', 'itemprop'],
-            'a': ['href', 'rel', 'title'],
-            'img': ['alt', 'src', 'height', 'width', 'align', 'longdesc'],
-            'div': ['itemscope', 'itemtype'],
-            'blockquote': ['cite'],
-            'del': ['cite'],
-            'ins': ['cite'],
-            'q': ['cite'],
-            'input': ['type', 'disabled']
-        }
-        target.body_html = bleach.clean(
-            markdown(value, extensions=[GithubFlavoredMarkdownExtension()],
-                     output_format='html'),
-            tags=allowed_tags, attributes=attrs, strip=True)
+        target.body_html = md(value)
 
     @staticmethod
     def if_modified_update_mtimestamp(target, value, oldvalue, initiator):
         if value != oldvalue:
             target.mtimestamp = datetime.utcnow()
+
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 db.event.listen(Post.body, 'set', Post.if_modified_update_mtimestamp)
@@ -267,13 +253,7 @@ class Comment(db.Model):
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-                        'em', 'i', 'pre', 'strong']
-        attrs = {
-            '*': ['class'],
-            'a': ['href', 'rel', 'title'],
-        }
-        target.body_html = bleach.clean(markdown(value, output_format='html'),
-                        tags=allowed_tags, attributes=attrs, strip=True)
+        target.body_html = md(value)
+
 
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
