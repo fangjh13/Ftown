@@ -7,33 +7,7 @@ from flask_login import UserMixin
 from flask import current_app
 from itsdangerous import TimedJSONWebSignatureSerializer
 from hashlib import md5
-import houdini as h
-import misaka as m
-from pygments import highlight
-from pygments.formatters import HtmlFormatter, ClassNotFound
-from pygments.lexers import get_lexer_by_name
-
-
-class HighlighterRenderer(m.HtmlRenderer):
-    """
-    uses Pygments to highlight code (houdini is used to escape the HTML)
-    """
-    def blockcode(self, text, lang):
-        try:
-            lexer = get_lexer_by_name(lang, stripall=True)
-        except ClassNotFound:
-            lexer = None
-
-        if lexer:
-            formatter = HtmlFormatter()
-            return highlight(text, lexer, formatter)
-        return '\n<pre><code>{}</code></pre>\n'.format(
-                            h.escape_html(text.strip()))
-
-
-# markdown process
-renderer = HighlighterRenderer()
-md = m.Markdown(renderer, extensions=('fenced-code',))
+from grip import render_content
 
 
 class User(db.Model, UserMixin):
@@ -227,7 +201,7 @@ class Post(db.Model):
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        target.body_html = md(value)
+        target.body_html = render_content(value)
 
     @staticmethod
     def if_modified_update_mtimestamp(target, value, oldvalue, initiator):
@@ -253,7 +227,7 @@ class Comment(db.Model):
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        target.body_html = md(value)
+        target.body_html = render_content(value)
 
 
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
