@@ -12,18 +12,15 @@
 {%- endblock %}
 
 {% block styles %}
-{#   {{ super() }}#}
 
   {# 国内CDN bootstrap.min.css #}
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
   {# Theme CSS #}
   <link href="/static/css/clean-blog.css" rel="stylesheet">
 
   {# Custom Fonts #}
   <link href="/static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-{#  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>#}
-{#  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>#}
   <link href='/static/css/font1.css' rel='stylesheet' type='text/css'>
   <link href='/static/css/font2.css' rel='stylesheet' type='text/css'>
 
@@ -77,24 +74,16 @@
 
 
 {% block scripts %}
-{#   {{ super() }}#}
 
   {# 国内CDN #}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
   {# Theme JavaScript #}
   <script src="/static/js/clean-blog.min.js"></script>
 
-{#  <script>#}
-{#  $(document).ready(function () {#}
-{#      $('.container a').attr('target', '_blank');#}
-{#      $('.container .label-danger').parent().removeAttr('target');#}
-{#      $('.container .next a').removeAttr('target')#}
-{#  })#}
-{#  </script>#}
 
-  {{ moment.include_moment('local_js','https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js') }}
+  {{ moment.include_moment('local_js','https://cdn.bootcss.com/moment.js/2.10.3/moment-with-locales.min.js') }}
   {{ moment.locale('zh-CN') }}
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
