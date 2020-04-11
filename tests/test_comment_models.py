@@ -33,7 +33,7 @@ class CommentCase(unittest.TestCase):
         db.session.add(c)
         db.session.commit()
         c = Comment.query.first()
-        self.assertTrue(c.body_html == '<p><code>code</code></p>\n')
+        self.assertTrue(c.body_html == '<p><code>code</code></p>')
 
     def test_anonymous_partition(self):
         u = User(name='anonymous', incog_email='incognito@example.com',

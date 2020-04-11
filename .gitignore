@@ -98,3 +98,4 @@ __pycache__
 ftownvenv/
 
 .qiniu_pythonsdk_hostscache.json
+.vscode

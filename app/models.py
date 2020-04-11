@@ -7,7 +7,10 @@ from flask_login import UserMixin
 from flask import current_app
 from itsdangerous import TimedJSONWebSignatureSerializer
 from hashlib import md5
-from grip import render_content
+import markdown
+
+# markdwon render
+md = markdown.Markdown(extensions=['extra', 'codehilite', 'sane_lists', 'toc'])
 
 
 class User(db.Model, UserMixin):
@@ -197,11 +200,11 @@ class Post(db.Model):
                            lazy='dynamic')
 
     def __repr__(self):
-        return 'Post by %r' % self.author_id
+        return f'Post by {self.author_id!r} post id {self.id!r}'
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        target.body_html = render_content(value)
+        target.body_html = md.convert(value)
 
     @staticmethod
     def if_modified_update_mtimestamp(target, value, oldvalue, initiator):
@@ -227,7 +230,7 @@ class Comment(db.Model):
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        target.body_html = render_content(value)
+        target.body_html = md.convert(value)
 
 
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)

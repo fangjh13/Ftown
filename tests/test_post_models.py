@@ -35,5 +35,5 @@ class PostCase(unittest.TestCase):
         db.session.add(p)
         db.session.commit()
         p = Post.query.first()
-        self.assertTrue(p.body_html == '<p>modified</p>\n')
+        self.assertTrue(p.body_html == '<p>modified</p>')
         self.assertTrue(p.mtimestamp != old_time)
