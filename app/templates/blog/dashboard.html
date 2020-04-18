@@ -37,7 +37,7 @@
                                 </a>
                             </td>
                             <td>{{ p.views }}</td>
-                            <td>0</td>
+                            <td>{{ p.comments.count() }}</td>
                             <td>{{ p.likes }}</td>
                             <td>{{ moment(p.timestamp).format('l') }}</td>
                             <td>{{ moment(p.mtimestamp).format('lll') }}</td>

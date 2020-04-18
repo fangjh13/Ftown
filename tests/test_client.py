@@ -259,7 +259,8 @@ class FlaskClientCase(unittest.TestCase):
                                     data=dict(
                                         open_content='test',
                                         open_name='test_username_brief',
-                                        open_email='test@example.com'),
+                                        open_email='test@example.com',
+                                        open_captcha="abcd"),
                                     follow_redirects=True)
         self.assertTrue(b'test_username_brief' in response.data)
 

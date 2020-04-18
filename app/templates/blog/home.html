@@ -31,9 +31,13 @@
                 {% if not tag_name %}
                     {% set tag_name = None %}
                 {% endif %}
+                {% if not search_data %}
+                    {% set search_data = None %}
+                {% endif %}
                 {% if pagination %}
                     {% import '/blog/_macros.html' as macros %}
-                    {{ macros.pagination_widget(pagination, endpoint, username=username, tag_name=tag_name) }}
+                    {{ macros.pagination_widget(pagination, endpoint, username=username, tag_name=tag_name,
+                                                q=search_data) }}
                 {% endif %}
             </div>
         </div>

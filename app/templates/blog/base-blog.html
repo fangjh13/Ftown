@@ -44,6 +44,15 @@
 
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+        {% if g.search_form %}
+        <form class="navbar-form navbar-right" style="opacity: 0.3;" method="get" action="{{ url_for('blog.search') }}">
+            <div class="form-group">
+                {{ g.search_form.q(size=10, class='form-control', placeholder=g.search_form.q.label.text) }}
+            </div>
+        </form>
+        {% endif %}
+
         <ul class="nav navbar-nav navbar-right">
           <li>
             <a href={{ url_for("blog.home") }}>主页</a>

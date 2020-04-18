@@ -25,6 +25,7 @@ class DevelopmentConfig(Config):
     MAIL_PORT = 25
     MAIL_USE_TLS = False
     MAIL_USE_SSL = False
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 
 
 class TestingConfig(Config):
@@ -38,6 +39,7 @@ class TestingConfig(Config):
     MAIL_PORT = 25
     MAIL_USE_TLS = False
     MAIL_USE_SSL = False
+    ELASTICSEARCH_URL = "http://localhost:19200"
     # MAIL_SUPPRESS_SEND = False
 
 

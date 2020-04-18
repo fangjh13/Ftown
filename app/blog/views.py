@@ -2,23 +2,17 @@
 
 import os
 from datetime import date
-
-from flask import render_template, request, flash, redirect, url_for, abort,\
-    session
+from flask import render_template, request, flash, redirect, url_for, abort, session, g, current_app
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
-
+from sqlalchemy import cast, Date
 from app import db
+from app.blog.captcha import generate_captcha_image
 from . import blog
-from .forms import WriteForm, CommentForm, CommentOpenForm
+from .forms import WriteForm, CommentForm, CommentOpenForm, SearchForm
 from ..email import send_mail
 from ..models import User, Post, Comment, Tag
 from .qiniu_ftown import upload_picture
-from sqlalchemy import cast, Date
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
-import random
-from base64 import b64encode
-from io import BytesIO
 
 
 # Blog background management authentication
@@ -35,41 +29,10 @@ from io import BytesIO
 #     return False
 
 
-def generate_captcha_image():
-    """ generate captcha image base64 """
-    # 随机字母:
-    def rndChar():
-        return chr(random.randint(65, 90))
+@blog.before_app_request
+def before_request():
+    g.search_form = SearchForm()
 
-    # 随机颜色1:
-    def rndColor():
-        return (random.randint(64, 255), random.randint(64, 255), random.randint(64, 255))
-
-    # 随机颜色2:
-    def rndColor2():
-        return (random.randint(32, 127), random.randint(32, 127), random.randint(32, 127))
-
-    # 240 x 60:
-    width = 60 * 4
-    height = 60
-    image = Image.new('RGB', (width, height), (255, 255, 255))
-    # 创建Font对象:
-    font = ImageFont.truetype('arial.ttf', 36)
-    # 创建Draw对象:
-    draw = ImageDraw.Draw(image)
-    # 填充每个像素:
-    for x in range(width):
-        for y in range(height):
-            draw.point((x, y), fill=rndColor())
-    # 输出文字:
-    code = [rndChar() for i in range(4)]
-    for index, t in enumerate(code):
-        draw.text((60 * index + 10, 10), t, font=font, fill=rndColor2())
-    # 模糊:
-    image = image.filter(ImageFilter.BLUR)
-    buffer = BytesIO()
-    image.save(buffer, format='JPEG')
-    return code, str(b64encode(buffer.getvalue()), 'utf-8')
 
 
 @blog.route('/')
@@ -117,8 +80,14 @@ def post():
     db.session.add(post)
     db.session.commit()
     open_form = CommentOpenForm()
+    if current_app.config['TESTING']:
+        # for unit test
+        code, captcha_b64 = generate_captcha_image('abcd')
+    else:
+        code, captcha_b64 = generate_captcha_image()
     return render_template('/blog/post.html', post=post, form=form,
-                           comments=comments, count=count, open_form=open_form)
+                           captcha_b64=captcha_b64, comments=comments,
+                           count=count, open_form=open_form)
 
 
 @blog.route('/post/open-comment/<int:post_id>', methods=['POST'])
@@ -179,7 +148,11 @@ def onepost(post_id):
     db.session.add(post)
     db.session.commit()
     open_form = CommentOpenForm()
-    code, captcha_b64 = generate_captcha_image()
+    if current_app.config['TESTING']:
+        # for unit test
+        code, captcha_b64 = generate_captcha_image('abcd')
+    else:
+        code, captcha_b64 = generate_captcha_image()
     return render_template('/blog/post.html', post=post, form=form,
                            comments=comments, count=count, open_form=open_form,
                            captcha_b64=captcha_b64, code=''.join(code))
@@ -200,7 +173,11 @@ def contact():
                   form=form)
         flash('提交成功，我会很快联系你的')
         return redirect(url_for('.contact'))
-    code, captcha_b64 = generate_captcha_image()
+    if current_app.config['TESTING']:
+        # for unit test
+        code, captcha_b64 = generate_captcha_image('abcd')
+    else:
+        code, captcha_b64 = generate_captcha_image()
     session['code'] = ''.join(code)
     return render_template('/blog/contact.html', captcha_b64=captcha_b64)
 
@@ -387,8 +364,41 @@ def post_brief(y, m, d, brief_title):
     db.session.add(post)
     db.session.commit()
     open_form = CommentOpenForm()
-    code, captcha_b64 = generate_captcha_image()
+    if current_app.config['TESTING']:
+        # for unit test
+        code, captcha_b64 = generate_captcha_image('abcd')
+    else:
+        code, captcha_b64 = generate_captcha_image()
     session['code'] = ''.join(code)
     return render_template('/blog/post.html', post=post, form=form,
-                           comments=comments, count=count, open_form=open_form,
+                           comments=comments, count=count,
+                           open_form=open_form,
                            captcha_b64=captcha_b64, code=''.join(code))
+
+
+@blog.route('/search')
+def search():
+    if not g.search_form.validate():
+        return redirect(url_for('blog.home'))
+    page = request.args.get('page', 1, type=int)
+
+    posts, total = Post.search(g.search_form.q.data, page, 4)
+    next_url = url_for('blog.search', q=g.search_form.q.data, page=page+1) \
+            if total > page * 4 else None
+    prev_url = url_for('blog.search', q=g.search_form.q.data, page=page-1) \
+            if page > 1 else None
+    # fake pagination
+    pagination = None
+    if next_url or prev_url:
+        class Foo: pass
+        pagination = Foo()
+        if next_url:
+            pagination.has_next = True
+            pagination.next_num = page+1
+        if prev_url:
+            pagination.has_prev = True
+            pagination.prev_num = page-1
+    return render_template('/blog/home.html', posts=posts,
+                           pagination=pagination,
+                           search_data=g.search_form.q.data,
+                           endpoint="blog.search")

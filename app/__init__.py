@@ -10,6 +10,7 @@ from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_pagedown import PageDown
 from flask_redis import FlaskRedis
+from elasticsearch import Elasticsearch
 
 
 db = SQLAlchemy()
@@ -36,6 +37,10 @@ def create_app(config_name='default'):
     login_manager.init_app(app)
     pagedown.init_app(app)
     redis_store.init_app(app)
+
+    # elasticsearch engin
+    app.elasticsearch = Elasticsearch(app.config['ELASTICSEARCH_URL']) if \
+        app.config['ELASTICSEARCH_URL'] else None
 
     from .main import main
     app.register_blueprint(main)
