@@ -49,6 +49,7 @@ class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = \
         'mysql+pymysql://{}:{}@localhost/ftown'.format(
             os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
     # gmail
     # MAIL_PORT = 587
     # MAIL_USE_TLS = True
