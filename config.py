@@ -19,8 +19,9 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = \
-        'mysql+pymysql://{}:{}@localhost/ftown'.format(
-            os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
+        'mysql+pymysql://{}:{}@{}/ftown'.format(
+            os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'),
+            os.getenv('DB_URI') or "localhost")
     MAIL_SERVER = "smtp.163.com"
     MAIL_PORT = 25
     MAIL_USE_TLS = False
