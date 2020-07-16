@@ -19,9 +19,8 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = \
-        'mysql+pymysql://{}:{}@{}/ftown'.format(
-            os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'),
-            os.getenv('DB_URI') or "localhost")
+        'mysql+pymysql://{}:{}@localhost/ftown'.format(
+            os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
     MAIL_SERVER = "smtp.163.com"
     MAIL_PORT = 25
     MAIL_USE_TLS = False
@@ -48,8 +47,9 @@ class ProductionConfig(Config):
     # gmail
     # MAIL_SERVER = "smtp.gmail.com"
     SQLALCHEMY_DATABASE_URI = \
-        'mysql+pymysql://{}:{}@localhost/ftown'.format(
-            os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
+        'mysql+pymysql://{}:{}@{}/ftown'.format(
+            os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'),
+            os.getenv('DB_URI') or "localhost")
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
     # gmail
     # MAIL_PORT = 587

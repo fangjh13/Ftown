@@ -9,7 +9,6 @@ COPY app app
 COPY migrations migrations
 COPY config.py manage.py run.sh ./
 COPY .env .env
-
-EXPOSE 8000
+RUN mkdir log
 
 CMD ["/bin/bash", "run.sh"]

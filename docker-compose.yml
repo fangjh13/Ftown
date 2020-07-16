@@ -1,5 +1,46 @@
 version: "3.8"
 services:
+  ftown:
+    image: ftown:v1.0
+    container_name: ftown
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - socket-dir:/socket
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  proxy:
+    image: nginx:1.19.0
+    container_name: nginx
+    ports:
+      - 80:80
+      - 443:443
+    labels:
+      - sh.acme.autoload.domain=fythonfang.com
+    volumes:
+      - ./Ops/nginx/conf.d:/etc/nginx/conf.d
+      - ./Ops/nginx/ssl:/etc/nginx/ssl
+      - socket-dir:/socket
+
+  acme.sh:
+    image: neilpang/acme.sh
+    container_name: acme.sh
+    command: daemon
+    volumes:
+      - ./Ops/acme-out:/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=fythonfang.com
+      - DEPLOY_DOCKER_CONTAINER_KEY_FILE=/etc/nginx/ssl/fythonfang.com/key.pem
+      - DEPLOY_DOCKER_CONTAINER_CERT_FILE="/etc/nginx/ssl/fythonfang.com/cert.pem"
+      - DEPLOY_DOCKER_CONTAINER_CA_FILE="/etc/nginx/ssl/fythonfang.com/ca.pem"
+      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/etc/nginx/ssl/fythonfang.com/full.pem"
+      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="service nginx force-reload"
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
     container_name: elasticsearch
@@ -11,7 +52,7 @@ services:
       - "MAX_LOCKED_MEMORY=100000"
       - "MAX_OPEN_FILES=65535"
     volumes:
-      - ./elasticsearch.yml:/usr/share/elasticsearch/data/elasticsearch.yml
+      - ./Ops/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/data/elasticsearch.yml
     deploy:
       replicas: 1
       update_config:
@@ -24,23 +65,15 @@ services:
 
   db:
     image: mariadb:10.5.4
-    environment:
-      - MYSQL_ROOT_PASSWORD=example
+    container_name: mariadb
     deploy:
       replicas: 1
       restart_policy:
         condition: any
       rollback_config:
         order: start-first
+    volumes:
+      - ./Ops/mysql:/var/lib/mysql
 
-  ftown:
-    image: ftown:v1.0
-    build:
-      dockerfile: Dockerfile
-      context: .
-    ports:
-      - 8000:8000
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
+volumes:
+  socket-dir:

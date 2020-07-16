@@ -1,1 +1,1 @@
-exec gunicorn --workers 4 -b 0.0.0.0:8000 manage:app
+exec gunicorn --workers 4 -b unix:/socket/ftown.sock -m 777 manage:app
