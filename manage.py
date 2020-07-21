@@ -12,6 +12,7 @@ if os.path.exists('.env'):
 
 from app import create_app, db
 from app.models import User, Post, Comment, Tag
+import click
 from flask_migrate import Migrate, MigrateCommand
 
 app = create_app(os.getenv('FTOWN_CONFIG') or 'default')
@@ -26,9 +27,25 @@ def _make_context():
 
 
 @app.cli.command()
-def test():
+@click.option('--pattern', default=None, help='test files that match pattern will be loaded.')
+def test(pattern):
+    """ project unit test """
     import unittest
-    tests = unittest.TestLoader().discover('tests')
+    if pattern:
+        tests = unittest.TestLoader().discover('tests', pattern)
+    else:
+        tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
 
+
+@app.cli.command("search-reindex")
+def search_reindex():
+    """ reindex Posts searching use elasticsearch"""
+    Post.reindex()
+
+
+@app.cli.command("deploy")
+def deploy():
+    """ deloply project"""
+    db.create_all()
 

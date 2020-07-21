@@ -88,8 +88,11 @@ class ProductionConfig(Config):
 
         # TimeRotatingFileHandler
         from logging.handlers import TimedRotatingFileHandler
+        LOG_FILE = "warning.log"
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
         time_rotating_handler = TimedRotatingFileHandler(
-            filename='log/time_rotating_warning.log',
+            filename=f"logs/{LOG_FILE}",
             when='D',
             backupCount=7,
             encoding='utf-8',
@@ -101,9 +104,8 @@ class ProductionConfig(Config):
         app.logger.addHandler(time_rotating_handler)
 
         # handler proxy server headers
-        from werkzeug.contrib.fixers import ProxyFix
+        from werkzeug.middleware.proxy_fix import ProxyFix
         app.wsgi_app = ProxyFix(app.wsgi_app)
-
 
 
 config = {

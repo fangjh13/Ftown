@@ -24,6 +24,7 @@ services:
     volumes:
       - ./Ops/nginx/conf.d:/etc/nginx/conf.d
       - ./Ops/nginx/ssl:/etc/nginx/ssl
+      - ./app:/srv/app
       - socket-dir:/socket
 
   acme.sh:
