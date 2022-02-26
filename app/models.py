@@ -45,7 +45,7 @@ class User(db.Model, UserMixin):
     def verify_password(self, pswd):
         return check_password_hash(self.password_hash, pswd)
 
-    def generate_confirmation_token(self, expiration=2*60*60):
+    def generate_confirmation_token(self, expiration=2 * 60 * 60):
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'],
                                             expires_in=expiration)
         return s.dumps({'confirm': self.id})
@@ -71,7 +71,7 @@ class User(db.Model, UserMixin):
         db.session.commit()
 
     # generate change email token
-    def generate_change_email_token(self, new_email, expiration=2*60*60):
+    def generate_change_email_token(self, new_email, expiration=2 * 60 * 60):
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'],
                                             expires_in=expiration)
         return s.dumps({'change_email': self.id,
@@ -94,7 +94,7 @@ class User(db.Model, UserMixin):
         return False
 
     # reset password
-    def generate_reset_password(self, expiration=2*60*60):
+    def generate_reset_password(self, expiration=2 * 60 * 60):
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'],
                                             expires_in=expiration)
         return s.dumps({'reset_password': self.id})
@@ -146,7 +146,7 @@ class User(db.Model, UserMixin):
 
     def generate_basic_auth_token(self, expiration):
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'],
-                                                expires_in=expiration)
+                                            expires_in=expiration)
         return s.dumps({
             "basic_auth": self.id
         }).decode('utf-8')
@@ -172,6 +172,7 @@ tags_rel = db.Table('tags_rel',
                     db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
                     db.Column('post_id', db.Integer, db.ForeignKey('posts.id')))
 
+
 class Tag(db.Model):
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
@@ -191,15 +192,15 @@ class SearchableMixin:
         for i in range(len(ids)):
             when.append((ids[i], i))
         return cls.query.filter(cls.id.in_(ids)).order_by(
-                db.case(when, value=cls.id)), total
+            db.case(when, value=cls.id)), total
 
     @classmethod
     def before_commit(cls, session) -> None:
         session._changes = {
-                'add': list(session.new),
-                'update': list(session.dirty),
-                'delete': list(session.deleted)
-                }
+            'add': list(session.new),
+            'update': list(session.dirty),
+            'delete': list(session.deleted)
+        }
 
     @classmethod
     def after_commit(cls, session) -> None:
@@ -218,6 +219,7 @@ class SearchableMixin:
     def reindex(cls) -> None:
         for obj in cls.query:
             add_to_index(cls.__tablename__, obj)
+
 
 db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
 db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)

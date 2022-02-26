@@ -22,6 +22,7 @@ Flask-PageDown==0.4.0
 flask-redis==0.4.0
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==1.0.0
+gunicorn==20.1.0
 idna==2.7
 ipython-genutils==0.2.0
 itsdangerous==1.1.0
