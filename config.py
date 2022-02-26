@@ -21,10 +21,10 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = \
         'mysql+pymysql://{}:{}@localhost/ftown'.format(
             os.getenv('FTOWNUSER'), os.getenv('FTOWNPASSWD'))
-    MAIL_SERVER = "smtp.163.com"
-    MAIL_PORT = 25
+    MAIL_SERVER = "smtp.mail.yahoo.com"
+    MAIL_PORT = 465
     MAIL_USE_TLS = False
-    MAIL_USE_SSL = False
+    MAIL_USE_SSL = True
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 
 

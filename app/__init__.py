@@ -39,7 +39,9 @@ def create_app(config_name='default'):
     redis_store.init_app(app)
 
     # elasticsearch engin
-    app.elasticsearch = Elasticsearch(app.config['ELASTICSEARCH_URL']) if \
+    app.elasticsearch = Elasticsearch(
+        hosts=app.config['ELASTICSEARCH_URL'],
+        http_auth=('elastic', '123456')) if \
         app.config['ELASTICSEARCH_URL'] else None
 
     from .main import main

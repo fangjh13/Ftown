@@ -13,7 +13,7 @@ if os.path.exists('.env'):
 from app import create_app, db
 from app.models import User, Post, Comment, Tag
 import click
-from flask_migrate import Migrate, MigrateCommand
+from flask_migrate import Migrate
 
 app = create_app(os.getenv('FTOWN_CONFIG') or 'default')
 
